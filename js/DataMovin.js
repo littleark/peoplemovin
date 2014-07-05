@@ -25,9 +25,12 @@
  *
  * Date: Sun Aug 01 00:05:56 2011 (CEST) +0200
  */
+
 function DataMovin(){
 
-	var canvas={},
+	var self=this,
+		requestId=null,
+		canvas={},
 		ctx={};
 	
 	var src={},
@@ -368,21 +371,60 @@ function DataMovin(){
 		
 	}
 	this.drawOutFlow=function(point,clean){
+		if(requestId) {
+			window.cancelAnimationFrame(requestId);
+			requestId=null;
+		}
 		if(clean)
 			this.clean();
-		for(var c in src[point].flows)
-			this.drawFlowFromTo(point,c);
-		current.src.push(point);
+		var flows=[];
+		for(var c in src[point].flows) {
+			flows.push(c);
+		}		
+		function drawOutFlow(callback) {
+			if(flows.length) {
+				var c=flows.shift();
+				self.drawFlowFromTo(point,c);
+				requestId = requestAnimationFrame(function(){
+					drawOutFlow(callback)
+				})		
+			} else {
+				callback();
+			}
+		
+		}
+		drawOutFlow(function(){
+			current.src.push(point);
+		});
 	}
 	this.drawInFlow=function(point,clean){
+		if(requestId) {
+			window.cancelAnimationFrame(requestId);
+			requestId=null;
+		}
 		if(clean)
 			this.clean();
+		var flows=[];
 		if(dst[point] && dst[point].flows) {
-			for(var c in dst[point].flows)
-				this.drawFlowFromTo(c,point);
-			current.dst.push(point);
-		}
-		
+			for(var c in dst[point].flows) {
+				flows.push(c);
+			}
+			function drawInFlow(callback) {
+				if(flows.length) {
+					var c=flows.shift();
+					self.drawFlowFromTo(c,point);
+					requestId = requestAnimationFrame(function(){
+						drawInFlow(callback)
+					})		
+				} else {
+					callback();
+				}
+			
+			}
+			drawInFlow(function(){
+				current.dst.push(point);
+			});
+		}	
 	}
 	this.drawFlowFromTo=function(from,to,clean){
 		
@@ -540,3 +582,35 @@ function DataMovin(){
 	
 	return this;
 };
+
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+ 
+// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+ 
+// MIT license
+ 
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());

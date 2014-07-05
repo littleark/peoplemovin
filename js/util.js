@@ -1,14 +1,3 @@
-window.requestAnimFrame=(function(){
-	return 	window.requestAnimationFrame ||
-			window.webkitRequestAnimationFrame ||
-			window.mozRequestAnimationFrame ||
-			window.oRequestAnimationFrame ||
-			window.msRequestAnimationFrame ||
-			function(callback,element){
-				window.setTimeout(callback,Math.ceil(1000/60))
-			};
-}());
-
 var Colors=function(){
 		
 	var current=0,
