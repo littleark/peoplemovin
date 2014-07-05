@@ -23,7 +23,17 @@
 		
 		var last=null,
 			previous=null;
-		
+		window.showCountries=function(countries) {
+			Finger.remove();
+			hideContents();
+			datamovin.showCountries(countries);
+		}
+		window.exportCanvas=function() {
+			var canvas=document.getElementById("flows");
+			var strDataUri = canvas.toDataURL("img/png;base64");
+			var img=$("body").append("<img src=\""+strDataUri+"\"/>");
+			//document.write("<img src='"+strDataUri+"'/>")
+		}
 		this.init=function(){
 			initDOM();
 			if(support_canvas()){
@@ -123,7 +133,6 @@
 					$("#src_title").html(window.countries[country_info.name]).show();
 					$("#dst_title").hide();
 					if(contents.hasClass("ontop")) {
-						//console.log($("#src_title"),$("#src_title").outerWidth())
 						left=170 - $("#src_title").outerWidth();
 					} else {
 						left=140+50;

@@ -102,6 +102,20 @@ function DataMovin(){
 			return null;
 		}
 	}
+	this.showCountries=function(countries) {
+		if(countries.length) {
+			var country=countries.shift();
+			try {
+				this.drawInFlow(country);
+			} catch(e) {
+				this.warn("drawOutFlow",country)
+			}
+
+			setTimeout(function(){
+				showCountries(countries)
+			},2000);
+		}
+	}
 	this.getPointInfo=function(point_name,type) {
 		var point={};
 		switch(type){
@@ -225,7 +239,6 @@ function DataMovin(){
 		var g = ctx.createLinearGradient(x, y, x+w, y+h);
 
 		for(var i=0;i<color_steps;i++) {
-			console.log("adding",i,c[i])
 			g.addColorStop(i/color_steps,"hsl("+c[i]+")")
 		}
 		
