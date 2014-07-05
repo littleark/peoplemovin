@@ -76,6 +76,7 @@ header #social ul li {
 .canvas_container{
 	position:relative;
 	clear:both;
+	min-height:4000px;
 }
 canvas#flows {
 	background:transparent;
@@ -377,6 +378,7 @@ span.not {
 	text-decoration: line-through;
 }
 #footer {
+	font-family: "Arvo",Georgia,serif;
 	height: 50px;
 	width: 940px;
 	margin: 85px auto 0
@@ -385,7 +387,7 @@ span.not {
 	text-align:center;
 }
 #footer #logo {
-	font-family: "Arvo",Georgia,serif;
+	
 	font-size:20px;
 }
 #footer #logo span {
