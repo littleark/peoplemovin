@@ -46,11 +46,11 @@
 						                        	if(datamovin.init("flows",{flows:json,margins:margins,orientation:'vertical',labels:countries})) {
 						                        		
 						                        		
-						                        		contents.height(datamovin.getCanvas().height);
+						                        		//contents.height(datamovin.getCanvas().height);
 						                        		
 						                        		datamovin.drawSources();
 						                        		datamovin.drawDestinations();
-						                        		datamovin.addLegend();
+						                        		//datamovin.addLegend();
 						                        		
 						                        		vertical=datamovin.getOrientation()=='vertical';
 

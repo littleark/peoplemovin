@@ -160,13 +160,13 @@ function DataMovin(){
 		var tot_from=0,tot_to=0;
 		for(var s in src) {
 			//src[s].color=colors.getHSL(Math.round(Math.map(src[s].flow,min,max,110,10)));
-			src[s].color=colors.getHSL(Math.round(logscale(src[s].flow,0,max,120,1)));
+			src[s].color=colors.getHSL(Math.round(logscale(src[s].flow,0,max/2,120,1)));
 			tot_from+=src[s].flow+step;
 		}
 		for(var d in dst) {
 			//dst[d].color=colors.getColor(Math.round(Math.map(dst[d].flow,dst_values.min,dst_values.max,50,colors.length-50)));
 			//dst[d].color=colors.getHSL(Math.round(Math.map(dst[d].flow,min,max,110,10)));
-			dst[d].color=colors.getHSL(Math.round(logscale(dst[d].flow,0,max,120,1)));
+			dst[d].color=colors.getHSL(Math.round(logscale(dst[d].flow,0,max/2,120,1)));
 			tot_to+=dst[d].flow+step;
 		}
 		dst=iterateSorted(dst,label_reference);
@@ -174,7 +174,7 @@ function DataMovin(){
 		
 		legend={
 			src_min:0,
-			src_max:max,
+			src_max:max/2,
 			dst_min:120,
 			dst_max:1
 		}
@@ -204,12 +204,8 @@ function DataMovin(){
 			y=20,
 			w=100,
 			h=20;
-
-		var color1=colors.getHSL(Math.round(logscale(legend.src_min,0,legend.src_max,120,1))),
-			color2=colors.getHSL(Math.round(logscale((legend.src_min+legend.src_max)/2,0,legend.src_max,120,1))),
-			color3=colors.getHSL(Math.round(logscale(legend.src_max,0,legend.src_max,120,1)));
 		
-		var color_steps=10;
+		var color_steps=20;
 
 		var c=(function(){
 			var c=[];
@@ -218,7 +214,7 @@ function DataMovin(){
 
 			for(var i=0;i<color_steps;i++) {
 				c.push(
-					colors.getHSL(Math.round(logscale(legend.src_min+step*i,0,legend.src_max,120,1)))
+					colors.getHSL(Math.round(logscale(legend.src_min+step*i,0,legend.src_max,legend.dst_min,legend.dst_max)))
 				);
 			}
 

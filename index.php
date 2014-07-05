@@ -50,13 +50,13 @@
 					
 			</div>
 		</header>
-		<div class="canvas_container">
+		<div class="canvas_container clearfix">
 			<canvas id="flows" width="940" class="datamovin"></canvas>
 			<div id="src_title" class="ititle"></div>
 			<div id="dst_title" class="ititle"></div>
-			<div class="clear"></div>
+			<div class="clearfix"></div>
 		</div>
-		<div class="clear"></div>
+		<div class="clearfix"></div>
 
 		<div id="src_info" class="info"></div>
 		<div id="dst_info" class="info"></div>
@@ -187,7 +187,9 @@
 				<p>
 				people<strong>movin</strong> is an experimental project in data visualization by Carlo Zapponi.
 				<br/><br/>
-				The current version of people<strong>movin</strong> is based on a HTML5 toolkit for the creation of flow charts called data<strong>movin</strong>. I'm currently working on it and I'll make it available <span class="not">soon</span>. In the meanwhile you can enjoy version 0.3 by digging into the source code of this site.
+				The current version of people<strong>movin</strong> is based on a HTML5 toolkit for the creation of flow 
+				charts called data<strong>movin</strong>. I'm currently working on it and I'll make it available 
+				<span class="not">soon</span>. In the meanwhile you can enjoy version 0.4 by digging into the source code of this site.
 				<br/><br/>
 				Follow me on <a href="http://twitter.com/littleark" target="_blank">twitter</a> <a href="http://twitter.com/littleark" class="twitter-follow-button" data-button="grey" data-text-color="#FFFFFF" data-link-color="#00AEFF" data-show-count="false">Follow @littleark</a>
 				<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
@@ -195,14 +197,26 @@
 				Contact me at <a href="mailto:info@makinguse.com">info[at]makinguse.com</a>
 				</p>
 			</div>
-			<div class="clear"></div>
+			<div class="clearfix"></div>
 		</div>
-
+		<div class="clearfix"></div>
 		
-		
-		<div class="clear"></div>
 	</div>
-	<div class="clear"></div>
+	<div class="clearfix"></div>
+	<div id="footer">
+
+			<h1 class="logo">
+				<div id="logo">people<span>movin</span></div>
+				<span><a href="http://www.makinguse.com" target="_blank" title="">Carlo Zapponi</a>, 2011</span>
+			</h1>
+			<!--<div class="social">
+				<a href="https://twitter.com/intent/tweet?hashtags=dataviz,algorithm&original_referer=http%3A%2F%2Fsorting.at&text=SORTING+-+A+visualization+of+the+most+famous+sorting+algorithms&url=http%3A%2F%2Fsorting.at%2F&via=littleark" target="_blank" title="Share on Twitter"><i class="icon-twitter"></i></a>
+				<a href="https://plus.google.com/share?url=sorting.at" target="_blank" title="Share on Google+"><i class="icon-gplus"></i></a>
+				<a href="http://facebook.com/sharer.php?u=http%3A%2F%2Fsorting.at" target="_blank" title="Share on Facebook"><i class="icon-facebook"></i></a>
+				<a href="http://pinterest.com/pin/create/button/?url=http%3A//sorting.at&media=http%3A//sorting.at/img/sorting.png&description=SORTING+-+A+visualization+of+the+most+famous+sorting+algorithms" target="_blank" title="Pin it!"><i class="icon-pinterest"></i></a>
+			</div>-->
+			<div id="licence"><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" class="cc" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><div>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-SA License</a>.</div></div>
+		</div>
 	<script src="js/DataMovin.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
 	<script src="js/DataMovinInteractions.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
 	<script src="js/finger.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
