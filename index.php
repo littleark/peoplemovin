@@ -20,19 +20,7 @@
 	
 	<script src="js/util.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
 	<script src="js/country_codes.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
-	<script type="text/javascript">
-
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-364839-23']);
-	  _gaq.push(['_trackPageview']);
-
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-
-	</script>
+	
 
 </head>
 <?php
@@ -45,8 +33,23 @@
 			<div id="header">
 				<h1>people<span>movin</span></h1>
 				<h2>migration flows across the world.</h2>
-				<div id="social"><ul><li><a href="http://pinterest.com/pin/create/button/?url=peoplemov.in&media=http%3A%2F%2Fpeoplemov.in%2Fimg%2Fpeoplemovin.png&description=Migration%20flows%20across%20the%20world" class="pin-it-button" count-layout="horizontal">Pin It</a><script type="text/javascript" src="http://assets.pinterest.com/js/pinit.js"></script></li><li><a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="littleark" data-counturl="peoplemov.in">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></li>
-					<li><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="http://www.peoplemov.in" send="false" layout="button_count" width="225" show_faces="false" font="lucida grande"></fb:like></li></ul></div>
+				<div id="social">
+					<ul>
+						<li>
+							<a href="http://pinterest.com/pin/create/button/?url=peoplemov.in&media=http%3A%2F%2Fpeoplemov.in%2Fimg%2Fpeoplemovin.png&description=Migration%20flows%20across%20the%20world" class="pin-it-button" count-layout="horizontal">Pin It</a><script type="text/javascript" src="http://assets.pinterest.com/js/pinit.js"></script>
+						</li>
+						
+						<li>
+							<div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="http://www.peoplemov.in" send="false" layout="button_count" width="225" show_faces="false" font="lucida grande"></fb:like>
+						</li>
+						<li>
+							<div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://peoplemov.in"></div>							
+						</li>
+						<li>
+							<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="littleark" data-counturl="peoplemov.in">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+						</li>
+					</ul>
+				</div>
 					
 			</div>
 		</header>
@@ -165,7 +168,12 @@
 				<h4>Data Sources</h4>
 				<br/>
 				<p>
-					All the presented data are the latest available as of &nbsp;<strong>2010</strong>.
+					All the presented data are based on the <a href="http://data.worldbank.org/data-catalog/migration-and-remittances" target="_blank">Migration and Remittances Factbook 2011</a>
+					reporting the latest available as of <strong>October 1, 2010</strong>.
+					<br/><br/>
+					The database of the UN Population Division is the most comprehensive source of information on international
+					migrant stocks for the period <strong>1960-2010</strong> for all 210 countries in the Migration and Remittances
+					Factbook 2011.
 				</p>
 					<br/>
 					<h5>Migration Data</h5>
@@ -173,7 +181,7 @@
 					<a href="http://econ.worldbank.org/WBSITE/EXTERNAL/EXTDEC/EXTDECPROSPECTS/0,,contentMDK:22803131~pagePK:64165401~piPK:64165026~theSitePK:476883,00.html" target="_blank">Bilateral Migration and Remittances 2010</a>
 					<br/>
 					<br/>
-					<h5>Refugees and Asylum</h5>
+					<h5>Migration, Refugees and Asylum</h5>
 					<a href="http://data.worldbank.org/data-catalog/migration-and-remittances" target="_blank">Migration and Remittances Factbook 2011</a>
 					<br/><br/>
 					<h5>World Population Data</h5>
@@ -189,7 +197,9 @@
 				<br/><br/>
 				The current version of people<strong>movin</strong> is based on a HTML5 toolkit for the creation of flow 
 				charts called data<strong>movin</strong>. I'm currently working on it and I'll make it available 
-				<span class="not">soon</span>. In the meanwhile you can enjoy version 0.4 by digging into the source code of this site.
+				<span class="not">soon</span>. In the meanwhile you can enjoy version 0.4 by exploring the public 
+				<a href="https://github.com/littleark/peoplemovin" target="_blank">github repository</a>.
+				
 				<br/><br/>
 				Follow me on <a href="http://twitter.com/littleark" target="_blank">twitter</a> <a href="http://twitter.com/littleark" class="twitter-follow-button" data-button="grey" data-text-color="#FFFFFF" data-link-color="#00AEFF" data-show-count="false">Follow @littleark</a>
 				<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
@@ -209,28 +219,21 @@
 				<div id="logo">people<span>movin</span></div>
 				<span><a href="http://www.makinguse.com" target="_blank" title="">Carlo Zapponi</a>, 2011</span>
 			</h1>
-			<!--<div class="social">
-				<a href="https://twitter.com/intent/tweet?hashtags=dataviz,algorithm&original_referer=http%3A%2F%2Fsorting.at&text=SORTING+-+A+visualization+of+the+most+famous+sorting+algorithms&url=http%3A%2F%2Fsorting.at%2F&via=littleark" target="_blank" title="Share on Twitter"><i class="icon-twitter"></i></a>
-				<a href="https://plus.google.com/share?url=sorting.at" target="_blank" title="Share on Google+"><i class="icon-gplus"></i></a>
-				<a href="http://facebook.com/sharer.php?u=http%3A%2F%2Fsorting.at" target="_blank" title="Share on Facebook"><i class="icon-facebook"></i></a>
-				<a href="http://pinterest.com/pin/create/button/?url=http%3A//sorting.at&media=http%3A//sorting.at/img/sorting.png&description=SORTING+-+A+visualization+of+the+most+famous+sorting+algorithms" target="_blank" title="Pin it!"><i class="icon-pinterest"></i></a>
-			</div>-->
 			<div id="licence"><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" class="cc" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><div>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-SA License</a>.</div></div>
 		</div>
 	<script src="js/DataMovin.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
 	<script src="js/DataMovinInteractions.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
 	<script src="js/finger.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
 	<script src="js/flows.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
-	<!-- Start Visual Website Optimizer Asynchronous Code -->
-<script type='text/javascript'>
-var _vwo_code=(function(){
-var account_id=40716,
-settings_tolerance=2000,
-library_tolerance=2500,
-use_existing_jquery=false,
-// DO NOT EDIT BELOW THIS LINE
-f=false,d=document;return{use_existing_jquery:function(){return use_existing_jquery;},library_tolerance:function(){return library_tolerance;},finish:function(){if(!f){f=true;var a=d.getElementById('_vis_opt_path_hides');if(a)a.parentNode.removeChild(a);}},finished:function(){return f;},load:function(a){var b=d.createElement('script');b.src=a;b.type='text/javascript';b.innerText;b.onerror=function(){_vwo_code.finish();};d.getElementsByTagName('head')[0].appendChild(b);},init:function(){settings_timer=setTimeout('_vwo_code.finish()',settings_tolerance);this.load('//dev.visualwebsiteoptimizer.com/j.php?a='+account_id+'&u='+encodeURIComponent(d.URL)+'&r='+Math.random());var a=d.createElement('style'),b='body{opacity:0 !important;filter:alpha(opacity=0) !important;background:none !important;}',h=d.getElementsByTagName('head')[0];a.setAttribute('id','_vis_opt_path_hides');a.setAttribute('type','text/css');if(a.styleSheet)a.styleSheet.cssText=b;else a.appendChild(d.createTextNode(b));h.appendChild(a);return settings_timer;}};}());_vwo_settings_timer=_vwo_code.init();
-</script>
-<!-- End Visual Website Optimizer Asynchronous Code -->
+	<script type="text/javascript" src="https://apis.google.com/js/platform.js"></script>
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-364839-23', 'auto');
+	  ga('send', 'pageview');
+	</script>
 </body>
 </html>
