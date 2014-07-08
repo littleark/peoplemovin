@@ -78,6 +78,14 @@ header #social ul li {
 	clear:both;
 	min-height:4000px;
 }
+canvas {
+	-webkit-transform: translateZ(0);
+	image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+}
 canvas#flows {
 	background:transparent;
 	position:relative;
@@ -132,6 +140,44 @@ canvas#ix {
 .ititle img {
 	width:12px;
 	height:12px;
+}
+#tooltip {
+	font-family: 'Open Sans', arial, serif;
+
+	position: absolute;
+	z-index:9999;
+	
+	top:0;
+	left:0;
+
+
+	
+
+	/*-webkit-transition: left 100ms ease,top 100ms ease;
+	-moz-transition: left 100ms ease,top 100ms ease;
+	-ms-transition: left 100ms ease,top 100ms ease;
+	-o-transition: left 100ms ease,top 100ms ease;
+	transition: left 100ms ease,top 100ms ease;*/
+	
+
+	font-weight: normal;
+	color:#ddd;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 300;
+	text-transform: uppercase;
+}
+#tooltip div {
+	display: block;
+	min-width:100px;
+	max-width: 200px;
+	left:-50%;
+	position:relative;
+	background: rgba(40,40,40,0.8);
+	padding:5px;
+}
+#tooltip div span {
+	color:#fff;
 }
 .info {
 	position:absolute;
@@ -255,7 +301,7 @@ canvas#ix {
 }
 #contents {
 	position:absolute;
-	display:block;
+	display:none;
 	height:100%;
 	width:520px;
 	z-index:1010;

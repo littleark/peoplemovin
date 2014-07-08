@@ -38,7 +38,7 @@ function DataMovinInteractions(){
 			scrollLeft:0
 		},
 		tm;
-	
+
 	var eventsCallbacks={
 		'click':null,
 		'mouseover':null,
@@ -133,16 +133,26 @@ function DataMovinInteractions(){
 			left,
 			position;
 		mouse=getPosition(e,canvas);
-		
+
 		if(mouse.x>=areas.src.x1 && mouse.x<=areas.src.x2) {
 			canvas.style.cursor="pointer";
 			
 			point=datamovin.lookUp(mouse.y,"src");
 
+			datamovin.findBezier(mouse.x,mouse.y);
+
 			info=datamovin.getPointInfo(point,'src');
 
 			if(eventsCallbacks.mouseover) {
 				eventsCallbacks.mouseover.call(e,info);
+			}
+		} else if(mouse.x > areas.src.x2 && mouse.x < areas.dst.x1) {
+			point=datamovin.findBezier(mouse.x,mouse.y);
+
+			//console.log(point);
+
+			if(eventsCallbacks.mouseover) {
+				eventsCallbacks.mouseoverbezier.call(e,point);
 			}
 		} else if(mouse.x>=areas.dst.x1 && mouse.x<=areas.dst.x2) {
 			canvas.style.cursor="pointer";
@@ -195,7 +205,7 @@ function DataMovinInteractions(){
 			if(!datamovin.checkCurrent(point,"src")) {
 				eventsCallbacks.processing.call(e,'start','src');
 				setTimeout(function tm(){
-					datamovin.drawOutFlow(point,true);
+					datamovin.drawOutFlow(point,e.shiftKey?false:true);
 					if(eventsCallbacks.click)
 						eventsCallbacks.click.call(e,datamovin.getPointInfo(point,'src'));
 					setTimeout(function ttm(){eventsCallbacks.processing.call(e,'end','src');},250);
@@ -210,7 +220,7 @@ function DataMovinInteractions(){
 			if(!datamovin.checkCurrent(point,"dst")) {
 				eventsCallbacks.processing.call(e,'start','dst');
 				setTimeout(function tm(){
-					datamovin.drawInFlow(point,true);
+					datamovin.drawInFlow(point,e.shiftKey?false:true);
 					if(eventsCallbacks.click)
 						eventsCallbacks.click.call(e,datamovin.getPointInfo(point,'dst'));
 					setTimeout(function ttm(){eventsCallbacks.processing.call(e,'end','dst');},250);

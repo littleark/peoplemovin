@@ -21,6 +21,7 @@
 	<script src="js/util.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
 	<script src="js/country_codes.js?<?=time()?>" type="text/javascript" charset="utf-8"></script>
 	
+	<script src="js/jsBezier-0.6.js" type="text/javascript"></script>
 
 </head>
 <?php
@@ -35,9 +36,9 @@
 				<h2>migration flows across the world.</h2>
 				<div id="social">
 					<ul>
-						<li>
+						<!--<li>
 							<a href="http://pinterest.com/pin/create/button/?url=peoplemov.in&media=http%3A%2F%2Fpeoplemov.in%2Fimg%2Fpeoplemovin.png&description=Migration%20flows%20across%20the%20world" class="pin-it-button" count-layout="horizontal">Pin It</a><script type="text/javascript" src="http://assets.pinterest.com/js/pinit.js"></script>
-						</li>
+						</li>-->
 						
 						<li>
 							<div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="http://www.peoplemov.in" send="false" layout="button_count" width="225" show_faces="false" font="lucida grande"></fb:like>
@@ -53,18 +54,27 @@
 					
 			</div>
 		</header>
-		<div class="canvas_container clearfix">
+		<div id="flows_container" class="canvas_container clearfix">
 			<canvas id="flows" width="940" class="datamovin"></canvas>
 			<div id="src_title" class="ititle"></div>
 			<div id="dst_title" class="ititle"></div>
-			<div class="clearfix"></div>
+			<div id="tooltip">
+				<div>
+				<span id="flow"></span> people have moved from
+				<span id="from"></span>
+				to <span id="to"></span>
+				</div>
+			</div>
 		</div>
 		<div class="clearfix"></div>
 
 		<div id="src_info" class="info"></div>
 		<div id="dst_info" class="info"></div>
-		
+
 		<div id="contents" class="ontop">
+			<div style="position:absolute;width:100px;height:300px;">
+				<img id="download" width="100" height="300" style="width:100px;height:300px;border:1px solid #fff">
+			</div>
 			<div class="par">
 				<h3>World Population: <strong><?$world_pop=getWorldPopulation();echo number_format($world_pop,0,"",",")?></strong></h3>
 				<h3>Migrants in the world: <strong><? $migrants=getMigrationTotal();echo number_format($migrants,0,"",",");?></strong></h3>

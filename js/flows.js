@@ -1,6 +1,6 @@
 (function($){
 	
-	var $host="support/getflows2.php"
+	var $host="support/getflows3.php"
 		$info_host="support/getcountry.php";
 	
 	var Flows=new function(){
@@ -8,9 +8,7 @@
 		var contents=$("#contents");
 		
 		
-		var margins={left:170,top:10,right:170,bottom:0,padding:{left:0,right:0}},
-			box_w=10,
-			step=10;
+		var margins={left:170,top:10,right:170,bottom:0,padding:{left:0,right:0}};
 		
 		var canvas={},
 			ctx={};
@@ -23,6 +21,15 @@
 		
 		var last=null,
 			previous=null;
+
+
+		var tooltip={
+			el:$("#tooltip"),
+			from:$("#tooltip #from"),
+			to:$("#tooltip #to"),
+			flow:$("#tooltip #flow")
+		}
+
 		window.showCountries=function(countries) {
 			Finger.remove();
 			hideContents();
@@ -30,9 +37,12 @@
 		}
 		window.exportCanvas=function() {
 			var canvas=document.getElementById("flows");
-			var strDataUri = canvas.toDataURL("img/png;base64");
-			var img=$("body").append("<img src=\""+strDataUri+"\"/>");
+			var strDataUri = canvas.toDataURL("img/png;base64");//.replace("image/png", "image/octet-stream");
+			//window.location.href=strDataUri;
+			//var img=$("body").append("<img src=\""+strDataUri+"\"/>");
 			//document.write("<img src='"+strDataUri+"'/>")
+			$("#download").attr("src",strDataUri)
+
 		}
 		this.init=function(){
 			initDOM();
@@ -71,6 +81,7 @@
 								dm_interactions.registerMouseEvents({
 									'click':showCountryInfo,
 									'mouseover':showCountryName,
+									'mouseoverbezier':showFlowInfo,
 									'mouseout':hideCountryName,
 									//'document_scrollwheel':hideCountryName,
 									'processing':handleProcessing
@@ -124,6 +135,24 @@
 			} else {
 				$("<div/>").attr("class","alert").html("Unfortunately your browser does not support <span>HTML5</span>.<br/>Please upgrade to a modern browser to fully enjoy <span>people<strong>movin</strong></span>").prependTo("#contents").fadeIn(1000);
 			}
+		}
+		function showFlowInfo(info) {
+			//console.log(info);
+			if(info.p) {
+				tooltip.el.css({
+					left:Math.round(info.p.x)+"px",
+					top:Math.round(info.p.y-60)+"px",
+				}).show();
+				//console.log(info)
+				tooltip.from.text(window.countries[info.i.flow.f]);
+				tooltip.to.text(window.countries[info.i.flow.t]);
+				tooltip.flow.text(info.i.flow.q.toLocaleString());
+
+			} else {
+				tooltip.el.hide();
+			}
+			
+
 		}
 		function showCountryName(country_info){
 

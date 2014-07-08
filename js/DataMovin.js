@@ -30,15 +30,15 @@ function DataMovin(){
 
 	var self=this,
 		requestId=null,
-		canvas={},
-		ctx={};
-	
+		canvas,
+		ctx;
+
 	var src={},
 		dst={},
 		lookup={src:[],dst:[]},
-		current={src:[],dst:[]},
+		current={src:[],dst:[],beziers:[]},
 		label_reference=null;
-	
+
 	var margins={left:30,top:0,right:30,bottom:0},
 		padding={left:0,right:0},
 		step=10,
@@ -52,6 +52,18 @@ function DataMovin(){
 
 	var WIDTH,
 		HEIGHT;
+
+	canvas=document.createElement("canvas");
+	ctx=canvas.getContext("2d");
+
+	var devicePixelRatio = window.devicePixelRatio || 1,
+    	backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
+                            ctx.mozBackingStorePixelRatio ||
+                            ctx.msBackingStorePixelRatio ||
+                            ctx.oBackingStorePixelRatio ||
+                            ctx.backingStorePixelRatio || 1,
+
+        ratio = devicePixelRatio / backingStoreRatio;
 	
 	this.init=function(canvas,options) {
 		if(!!document.createElement('canvas').getContext){
@@ -73,16 +85,27 @@ function DataMovin(){
 				left:(heights.to-heights.from>0)?(heights.to-heights.from)/2:0,
 				right:(heights.from-heights.to>0)?(heights.from-heights.to)/2:0
 			};
-			
+
+			canvas=document.createElement("canvas");
 			canvas=document.getElementById("flows");
 			ctx=canvas.getContext("2d");
+
 			ctx.lineCap = 'butt';
+
+			ctx.imageSmoothingEnabled = false;
+		    ctx.webkitImageSmoothingEnabled = false;
+		    ctx.mozImageSmoothingEnabled = false;
+
+		    
+
 			orientation=options.orientation || orientation;
 			if(orientation=='horizontal') {
 				canvas.height=canvas.width;
 				canvas.width=(heights.from+margins.top+margins.bottom);
 			} else {
 				canvas.height=(heights.from+margins.top+margins.bottom);
+				//+100 fix a bug in chrome when using highDPI scale deviceRatio
+				canvas.height+=100;
 			}
 
 			WIDTH=canvas.width;
@@ -91,14 +114,24 @@ function DataMovin(){
 			this.ctx=ctx;
 			this.margins=margins;
 			
-			canvas.setAttribute("width",WIDTH * window.devicePixelRatio);
-			canvas.setAttribute("height",HEIGHT * window.devicePixelRatio);
-       		
-       		
-       		canvas.style.setProperty("width",WIDTH+"px");
-       		canvas.style.setProperty("height",HEIGHT+"px");
+			
 
-       		ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+		    if (typeof auto === 'undefined') {
+		        auto = true;
+		    }
+		    if (auto && devicePixelRatio !== backingStoreRatio) {
+		    	canvas.width= WIDTH * ratio;
+				canvas.height= HEIGHT * ratio;
+	       		
+	       		ctx.fill="#000000";
+	       		ctx.fillRect(0,0,canvas.width,canvas.height);
+	       		
+	       		canvas.style.setProperty("width",(WIDTH)+"px");
+	       		canvas.style.setProperty("height",(HEIGHT)+"px");
+
+	       		ctx.scale(ratio, ratio);
+
+		    }
 
 			return this;
 		} else {
@@ -157,13 +190,27 @@ function DataMovin(){
 			var source=flows[s];
 			source.flow=0;
 			for(var d in source.flows) {
-				source.flow+=source.flows[d];
+				source.flow+=source.flows[d].v;
 				if(!dst[d])
 					dst[d]={flow:0,flows:{}};
-				dst[d].flow+=source.flows[d];
-				dst[d].flows[s]={flow:source.flows[d]};
+				dst[d].flow+=source.flows[d].v;
+				dst[d].flows[s]={
+						flow:source.flows[d].v,
+						i:{
+							q:source.flows[d].f,
+							f:s,
+							t:d
+						}
+				};
 				dst_values.max=Math.max(dst_values.max,dst[d].flow);
-				source.flows[d]={flow:source.flows[d]};
+				source.flows[d]={
+					flow:source.flows[d].v,
+					i:{
+						q:source.flows[d].f,
+						f:s,
+						t:d
+					}
+				};
 			}
 			src[s]=source;
 
@@ -316,7 +363,7 @@ function DataMovin(){
 		return areas;
 	}
 	this.getCanvas=function(){
-		return ctx.canvas;
+		return ctx.canvas;S
 	};
 	this.getOrientation=function(){
 		return orientation;
@@ -330,7 +377,7 @@ function DataMovin(){
 				y = margins.top+padding.left;
 				
 				//areas.src={x1:x,y1:y,x2:x+box_w};
-				areas.src={x1:0,y1:y,x2:x+box_w+50};
+				areas.src={x1:0,y1:y,x2:x+box_w};
 				
 				drawBoxes(src,x,y,{align:"left",valign:"center",orientation:orientation,type:"src"});
 			break;
@@ -355,7 +402,7 @@ function DataMovin(){
 				y = margins.top+padding.right;
 			
 				//areas.dst={x1:x,y1:y,x2:x+box_w};
-				areas.dst={x1:x-50,y1:y,x2:WIDTH};
+				areas.dst={x1:x,y1:y,x2:WIDTH};
 				
 				drawBoxes(dst,x,y,{align:"right",valign:"center",orientation:orientation,type:"dst"});
 			break;
@@ -370,6 +417,20 @@ function DataMovin(){
 		}
 		
 	}
+	function drawOutFlow(flows,point,callback) {
+		if(flows.length) {
+			var c=flows.shift();
+			self.drawFlowFromTo(point,c);
+			
+			requestId = requestAnimationFrame(function(){
+				drawOutFlow(flows,point,callback)
+			});
+
+		} else {
+			callback();
+		}
+	
+	}
 	this.drawOutFlow=function(point,clean){
 		if(requestId) {
 			window.cancelAnimationFrame(requestId);
@@ -380,22 +441,23 @@ function DataMovin(){
 		var flows=[];
 		for(var c in src[point].flows) {
 			flows.push(c);
-		}		
-		function drawOutFlow(callback) {
-			if(flows.length) {
-				var c=flows.shift();
-				self.drawFlowFromTo(point,c);
-				requestId = requestAnimationFrame(function(){
-					drawOutFlow(callback)
-				})		
-			} else {
-				callback();
-			}
-		
 		}
-		drawOutFlow(function(){
+		
+		drawOutFlow(flows,point,function(){
 			current.src.push(point);
 		});
+	}
+	function drawInFlow(flows,point,callback) {
+		if(flows.length) {
+			var c=flows.shift();
+			self.drawFlowFromTo(c,point);
+			requestId = requestAnimationFrame(function r(){
+				drawInFlow(flows,point,callback)
+			});
+		} else {
+			callback();
+		}
+	
 	}
 	this.drawInFlow=function(point,clean){
 		if(requestId) {
@@ -409,19 +471,7 @@ function DataMovin(){
 			for(var c in dst[point].flows) {
 				flows.push(c);
 			}
-			function drawInFlow(callback) {
-				if(flows.length) {
-					var c=flows.shift();
-					self.drawFlowFromTo(c,point);
-					requestId = requestAnimationFrame(function(){
-						drawInFlow(callback)
-					})		
-				} else {
-					callback();
-				}
-			
-			}
-			drawInFlow(function(){
+			drawInFlow(flows,point,function(){
 				current.dst.push(point);
 			});
 		}	
@@ -440,7 +490,8 @@ function DataMovin(){
 		var info={
 			color:src[from].color,
 			color2:dst[to].color,
-			"stroke-width":__from.flow
+			"stroke-width":__from.flow,
+			flow:__from.i
 		};
 
 		if(orientation=='horizontal') {
@@ -459,11 +510,11 @@ function DataMovin(){
 				return c;
 			}()),
 			points_index=0;
-		var that=this;
+
 		(function loop(){
 			if(src[points[points_index]] && src[points[points_index]].flows)
 			for(var t in src[points[points_index]].flows)
-				that.drawFlowFromTo(points[points_index],t)
+				self.drawFlowFromTo(points[points_index],t)
 			points_index++;
 			setTimeout(loop,1000)
 		}());
@@ -481,7 +532,11 @@ function DataMovin(){
 		bx,by => dest control point
 	*/
 	function drawCurve(x, y, zx, zy, info) {
-		ctx.save();
+		x=Math.round(x);
+		y=Math.round(y);
+		zx=Math.round(zx);
+		zy=Math.round(zy);
+		//ctx.save();
 		if(info.color2) {
 			var g = ctx.createLinearGradient(x, y, zx, zy);
 			g.addColorStop(0,"hsla("+info.color+",0.75)");
@@ -490,34 +545,94 @@ function DataMovin(){
 		} else {
 			ctx.strokeStyle="hsla("+info.color+",0.75)";
 		}
-		ctx.lineWidth=(info['stroke-width']>1?info['stroke-width']:1);
-		ctx.lineCap = 'butt';
+		ctx.lineWidth=(info['stroke-width']>1?info['stroke-width']:0.5);
 		
 		ctx.beginPath();
-		ctx.moveTo(x,y);
+		
 		
 		if(orientation=='horizontal') {
+			ctx.moveTo(x,y)
 			ctx.bezierCurveTo(
-				x, (y+(zy-y)/1.5), 
-				zx, (zy-(zy-y)/1.5), 
+				x, Math.round((y+(zy-y)/1.5)), 
+				zx, Math.round((zy-(zy-y)/1.5)), 
 				zx, zy
 			);
 		} else {
+			/*
+			ctx.moveTo(x,y);
 			ctx.bezierCurveTo(
-				zx-(zx-x)/2, y,
-				x+(zx-x)/2, zy,
+				Math.round(zx-(zx-x)/2), y,
+				Math.round(x+(zx-x)/2), zy,
 				zx, zy
 			);
+			*/
+			splitBezier(ctx,x,y,zx,zy);
+			current.beziers.push(
+				{
+					b:[
+						{	x:x,
+							y:y
+						},
+						{	x:Math.round(zx-(zx-x)/2),
+							y:y
+						},
+						{	x:Math.round(x+(zx-x)/2),
+							y:zy
+						},
+						{	x:zx,
+							y:zy
+						}
+					],
+					info:info
+				}
+			);
 		}
-
 		ctx.stroke();
-		ctx.closePath();
-		ctx.restore();
+		//ctx.closePath();
+		//ctx.restore();
+	}
+	this.findBezier=function(x,y) {
+		var point=null,
+			bezier=null,
+			location=null;
+		if(current.beziers.length>0) {
+			var distance=WIDTH;
+
+			for(var i=0;i<current.beziers.length;i++) {
+				var d=jsBezier.distanceFromCurve({x:x,y:y},current.beziers[i].b);
+				if(d.distance<distance) {
+					bezier=current.beziers[i];
+					distance=d.distance;
+					location=d.location;
+
+					if(distance<5)
+						break;
+				}
+			}
+
+			//console.log(bezier.b);
+			//console.log(distance,location);
+			if(bezier) {
+				point=jsBezier.pointOnCurve(bezier.b,1-location);	
+			}
+			
+
+		}
+		return {
+			p:point,
+			l:location,
+			i:bezier?bezier.info:null
+		}
+	}
+	this.getBeziers=function() {
+		return current.beziers;
 	}
 	this.clean=function(){
 		
 		current.dst=[];
 		current.src=[];
+
+		current.beziers=[];
 		
 		switch(orientation) {
 			case 'vertical':
@@ -526,7 +641,11 @@ function DataMovin(){
 					w = WIDTH-margins.right-box_w-x;
 				
 				
-				ctx.clearRect(x,y-1,w,HEIGHT-margins.top-margins.bottom+1);
+				//ctx.clearRect(x,y-1,w,HEIGHT-margins.top-margins.bottom+1);
+				ctx.save();
+				ctx.fill="#000000";
+				ctx.fillRect(x,y-1,w,HEIGHT-margins.top-margins.bottom+1);
+				ctx.restore();
 			break;
 			case 'horizontal':
 				x = 0;//margins.left;

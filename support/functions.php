@@ -192,7 +192,7 @@ function getFlowsFrom($country=null,$limit=0,$order="`src`"){
 		$WHERE.="AND `src`='$country'";
 	if($limit)
 		$LIMIT=" LIMIT $limit";
-	$query="SELECT `src`,`dst`,`qta` FROM `flows` WHERE `qta`>0 $WHERE ORDER BY $order $LIMIT";//ORDER BY `qta` DESC";
+	$query="SELECT `src`,`dst`,`qta` FROM `flows` WHERE `qta`>1 $WHERE ORDER BY $order $LIMIT";//ORDER BY `qta` DESC";
 	//echo $query;
 	$result=mysql_query($query) or die("what's up with this query? ".$query);
 

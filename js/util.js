@@ -60,9 +60,9 @@ function iterateSorted(a,reference) {
 	}
 	return sorted;
 }
-Array.prototype.remove=function(i){
+/*Array.prototype.remove=function(i){
 	this.splice(i,1);
-}
+}*/
 function support_canvas(){
 	return !!document.createElement('canvas').getContext
 }
@@ -93,3 +93,88 @@ Timer.prototype.tick=function(){
 	return gameDelta;
 	
 };
+
+function splitBezier(ctx,x,y,zx,zy) {
+
+	var round=Math.round;
+
+	var A={
+		x:x,
+		y:y
+	};
+
+	var B={
+		x:round(zx-(zx-x)/2),
+		y:y
+	}
+
+	var C={
+		x:round(x+(zx-x)/2),
+		y:zy
+	}
+
+	var D={
+		x:zx,
+		y:zy
+	}
+
+	var t=0.5;
+
+	var E={
+		x:round((A.x+B.x)*t),
+		y:round((A.y+B.y)*t)
+	}
+
+	var F={
+		x:round((B.x+C.x)*t),
+		y:round((B.y+C.y)*t)
+	}
+
+	var G={
+		x:round((C.x+D.x)*t),
+		y:round((C.y+D.y)*t)
+	}
+
+	var H={
+		x:round((E.x+F.x)*t),
+		y:round((E.y+F.y)*t)
+	}
+
+	var J={
+		x:round((F.x+G.x)*t),
+		y:round((F.y+G.y)*t)
+	}
+
+	var K={
+		x:round((H.x+J.x)*t),
+		y:round((H.y+J.y)*t)
+	}
+
+	/*
+		E = (A+B)/2
+		F = (B+C)/2
+		G = (C+D)/2
+		H = (E+F)/2
+		J = (F+G)/2
+		K = (H+J)/2
+
+		A,E,H,K and K,J,G,D.
+
+	*/
+
+	ctx.moveTo(A.x,A.y)
+	
+	ctx.bezierCurveTo(
+		E.x,E.y,
+		H.x,H.y,
+		K.x,K.y
+	);
+
+	ctx.bezierCurveTo(
+		J.x,J.y,
+		G.x,G.y,
+		D.x,D.y
+	);
+
+	
+}
