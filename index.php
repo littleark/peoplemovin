@@ -64,6 +64,7 @@
 				<span id="from"></span>
 				to <span id="to"></span>
 				</div>
+				<span class="dot"></span>
 			</div>
 		</div>
 		<div class="clearfix"></div>

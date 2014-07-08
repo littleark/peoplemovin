@@ -53,10 +53,10 @@ function DataMovinInteractions(){
 		left:0
 	}
 	
-	this.init=function($datamovin) {
+	this.init=function($datamovin,options) {
 		
 		datamovin=$datamovin;
-		canvas=datamovin.getCanvas();
+		canvas=options.canvas || datamovin.getCanvas();
 		orientation=datamovin.getOrientation();
 		areas=datamovin.getAreas();
 		
@@ -76,7 +76,7 @@ function DataMovinInteractions(){
 				canvas.addEventListener('mousemove', canvasMouseMoveHandlerVertical, false);
 			} else {
 				canvas.addEventListener('click', canvasMouseClickHandlerHorizontal, false);
-				canvas.addEventListener('mousemove', canvasMouseMoveHandlerHorizontal, false);
+				canvas.addEventListener('getAreas', canvasMouseMoveHandlerHorizontal, false);
 			}
 			canvas.addEventListener('mousedown', canvasMouseDownHandler, false);
 			canvas.addEventListener('mouseup', canvasMouseUpHandler, false);
@@ -147,6 +147,8 @@ function DataMovinInteractions(){
 				eventsCallbacks.mouseover.call(e,info);
 			}
 		} else if(mouse.x > areas.src.x2 && mouse.x < areas.dst.x1) {
+			canvas.style.cursor="default";
+
 			point=datamovin.findBezier(mouse.x,mouse.y);
 
 			//console.log(point);

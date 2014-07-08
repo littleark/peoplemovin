@@ -12,6 +12,8 @@
 		
 		var canvas={},
 			ctx={};
+
+		var ix_ctx;
 		
 		var processing=false;
 		
@@ -23,12 +25,18 @@
 			previous=null;
 
 
+		var ititle={
+			el:$(".ititle")
+		}
+
 		var tooltip={
 			el:$("#tooltip"),
 			from:$("#tooltip #from"),
 			to:$("#tooltip #to"),
-			flow:$("#tooltip #flow")
+			flow:$("#tooltip #flow"),
+			current:""
 		}
+
 
 		window.showCountries=function(countries) {
 			Finger.remove();
@@ -62,21 +70,39 @@
 						dataType: 'json',
 						success: function(json){	
 						                        	
-						                        	datamovin=new DataMovin();
-						                        	if(datamovin.init("flows",{flows:json,margins:margins,orientation:'vertical',labels:countries})) {
-						                        		
-						                        		
-						                        		//contents.height(datamovin.getCanvas().height);
-						                        		
-						                        		datamovin.drawSources();
-						                        		datamovin.drawDestinations();
-						                        		//datamovin.addLegend();
-						                        		
-						                        		vertical=datamovin.getOrientation()=='vertical';
+                        	datamovin=new DataMovin();
+                        	if(datamovin.init("flows",{flows:json,margins:margins,orientation:'vertical',labels:countries})) {
+                        		
+                        		var canvas=datamovin.getCanvas(),
+                        			ratio=datamovin.getRatio();
+
+                        		var ix=$("<canvas/>")
+                        			.attr({
+                        				id:"ix",
+                        				width:canvas.width,
+                        				height:canvas.height
+                        			})
+                        			.css({
+                        				width:(canvas.width/ratio)+"px",
+                        				height:(canvas.height/ratio)+"px"
+                        			})
+                        			.appendTo($("#flows_container"));
+
+                        		ix_ctx=ix[0].getContext("2d");
+                        		ix_ctx.scale(ratio,ratio);
+
+                        		//contents.height(datamovin.getCanvas().height);
+                        		
+
+                        		datamovin.drawSources();
+                        		datamovin.drawDestinations();
+                        		//datamovin.addLegend();
+                        		
+                        		vertical=datamovin.getOrientation()=='vertical';
 
 
 								var dm_interactions=new DataMovinInteractions();
-								dm_interactions.init(datamovin);
+								dm_interactions.init(datamovin,{canvas:ix[0]});
 								
 								dm_interactions.registerMouseEvents({
 									'click':showCountryInfo,
@@ -137,25 +163,67 @@
 			}
 		}
 		function showFlowInfo(info) {
-			//console.log(info);
+			ititle.el.hide();
 			if(info.p) {
+
+
+
 				tooltip.el.css({
 					left:Math.round(info.p.x)+"px",
 					top:Math.round(info.p.y-60)+"px",
 				}).show();
 				//console.log(info)
+
+				if((info.i.flow.f+"_"+info.i.flow.t)==tooltip.current) {
+					//console.log((info.i.flow.f+"_"+info.i.flow.t),"==",tooltip.current)
+					return;
+				}
+
+				tooltip.current=info.i.flow.f+"_"+info.i.flow.t;
+
 				tooltip.from.text(window.countries[info.i.flow.f]);
 				tooltip.to.text(window.countries[info.i.flow.t]);
 				tooltip.flow.text(info.i.flow.q.toLocaleString());
 
+				//console.log(datamovin);
+
+				info.i.ctx=ix_ctx;
+				info.i["stroke-width"]=info.i["stroke-width"]>1?info.i["stroke-width"]:1;
+				info.i.color="180,100%,50%";;
+				info.i.color2=null;
+				requestAnimationFrame(function(){
+					datamovin.clean(
+						ix_ctx,
+						{
+							transparent:true,
+							area:{
+								x1:info.b[0].x,
+								y1:info.b[0].y,
+								x2:info.b[3].x,
+								y2:info.b[3].y
+							}
+						}
+					);
+					datamovin.drawCurve(info.b[0].x,info.b[0].y,info.b[3].x,info.b[3].y,info.i);	
+				})
+				
+
 			} else {
+				tooltip.current=null;
+				datamovin.clean(ix_ctx,{
+					transparent:true
+				});
 				tooltip.el.hide();
 			}
 			
 
 		}
 		function showCountryName(country_info){
-
+			tooltip.current=null;
+			datamovin.clean(ix_ctx,{
+				transparent:true
+			});
+			tooltip.el.hide();
 			if(country_info && country_info.type) {
 				if(country_info.type=='src') {
 					
@@ -214,8 +282,14 @@
 		}
 		function hideCountryName(e){
 			var relTarget=e.relatedTarget || e.toElement;
-			if(!relTarget || (relTarget && relTarget.className && relTarget.className!='ititle'))
-				$(".ititle").hide();	
+			if(!relTarget || (relTarget && relTarget.className && relTarget.className!='ititle')) {
+				ititle.el.hide();
+			}
+			datamovin.clean(ix_ctx,{
+					transparent:true
+				});
+			tooltip.current=null;
+			tooltip.el.hide();
 		}
 		function handleMouseMove(e){
 			var relTarget=e.relatedTarget || e.toElement;
@@ -232,7 +306,7 @@
 			if(country_info){
 				//contents.hide();
 				hideContents();
-				$(".ititle").hide();
+				ititle.el.hide();
 				getCountryInfo(country_info.name,country_info.type,country_info.x,country_info.y+country_info.h/2+10,other,animate);
 				if(!other) {
 					if(country_info.type=='src') {
@@ -389,7 +463,7 @@
 				e.preventDefault();
 				$(".info").hide();
 			});
-			$(".ititle").live("click",function(e){
+			ititle.el.live("click",function(e){
 				e.preventDefault();
 				var $this=$(this);
 				

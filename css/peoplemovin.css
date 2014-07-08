@@ -99,8 +99,9 @@ canvas#flows.horizontal {
 canvas#ix {
 	background:transparent;
 	position:absolute;
-	z-index:999;
-	left:170px;
+	z-index:9999;
+	top:0;
+	left:0;
 }
 .ititle {
 	position:absolute;
@@ -145,7 +146,7 @@ canvas#ix {
 	font-family: 'Open Sans', arial, serif;
 
 	position: absolute;
-	z-index:9999;
+	z-index:99999;
 	
 	top:0;
 	left:0;

@@ -363,7 +363,10 @@ function DataMovin(){
 		return areas;
 	}
 	this.getCanvas=function(){
-		return ctx.canvas;S
+		return ctx.canvas;
+	};
+	this.getRatio=function(){
+		return ratio;
 	};
 	this.getOrientation=function(){
 		return orientation;
@@ -532,41 +535,45 @@ function DataMovin(){
 		bx,by => dest control point
 	*/
 	function drawCurve(x, y, zx, zy, info) {
+		var _ctx=(info.ctx)?info.ctx:ctx;
+		
+		//console.log(_ctx)
+
 		x=Math.round(x);
 		y=Math.round(y);
 		zx=Math.round(zx);
 		zy=Math.round(zy);
-		//ctx.save();
+		//_ctx.save();
 		if(info.color2) {
-			var g = ctx.createLinearGradient(x, y, zx, zy);
+			var g = _ctx.createLinearGradient(x, y, zx, zy);
 			g.addColorStop(0,"hsla("+info.color+",0.75)");
 			g.addColorStop(1,"hsla("+info.color2+",0.75)");
-			ctx.strokeStyle=g;
+			_ctx.strokeStyle=g;
 		} else {
-			ctx.strokeStyle="hsla("+info.color+",0.75)";
+			_ctx.strokeStyle="hsla("+info.color+",0.75)";
 		}
-		ctx.lineWidth=(info['stroke-width']>1?info['stroke-width']:0.5);
+		_ctx.lineWidth=(info['stroke-width']>1?info['stroke-width']:0.5);
 		
-		ctx.beginPath();
+		_ctx.beginPath();
 		
 		
 		if(orientation=='horizontal') {
-			ctx.moveTo(x,y)
-			ctx.bezierCurveTo(
+			_ctx.moveTo(x,y)
+			_ctx.bezierCurveTo(
 				x, Math.round((y+(zy-y)/1.5)), 
 				zx, Math.round((zy-(zy-y)/1.5)), 
 				zx, zy
 			);
 		} else {
 			/*
-			ctx.moveTo(x,y);
-			ctx.bezierCurveTo(
+			_ctx.moveTo(x,y);
+			_ctx.bezierCurveTo(
 				Math.round(zx-(zx-x)/2), y,
 				Math.round(x+(zx-x)/2), zy,
 				zx, zy
 			);
 			*/
-			splitBezier(ctx,x,y,zx,zy);
+			splitBezier(_ctx,x,y,zx,zy);
 			current.beziers.push(
 				{
 					b:[
@@ -587,9 +594,12 @@ function DataMovin(){
 				}
 			);
 		}
-		ctx.stroke();
-		//ctx.closePath();
-		//ctx.restore();
+		_ctx.stroke();
+		//_ctx.closePath();
+		//_ctx.restore();
+	}
+	this.drawCurve=function(x, y, zx, zy, info) {
+		drawCurve(x, y, zx, zy, info)
 	}
 	this.findBezier=function(x,y) {
 		var point=null,
@@ -621,38 +631,56 @@ function DataMovin(){
 		return {
 			p:point,
 			l:location,
-			i:bezier?bezier.info:null
+			i:bezier?bezier.info:null,
+			b:bezier?bezier.b:null
 		}
 	}
 	this.getBeziers=function() {
 		return current.beziers;
 	}
-	this.clean=function(){
+	this.clean=function(context,options){
 		
-		current.dst=[];
-		current.src=[];
+		var _ctx=context?context:ctx;
 
-		current.beziers=[];
-		
+		if(!context) {
+			current.dst=[];
+			current.src=[];
+
+			current.beziers=[];
+		}
 		switch(orientation) {
 			case 'vertical':
 				var x = margins.left+box_w,
 					y = margins.top+padding.left,
 					w = WIDTH-margins.right-box_w-x;
 				
-				
-				//ctx.clearRect(x,y-1,w,HEIGHT-margins.top-margins.bottom+1);
-				ctx.save();
-				ctx.fill="#000000";
-				ctx.fillRect(x,y-1,w,HEIGHT-margins.top-margins.bottom+1);
-				ctx.restore();
+				if(options && options.transparent) {
+					_ctx.clearRect(x,y-1,w,HEIGHT-margins.top-margins.bottom+1);	
+					return;
+					if(options.area) {
+						_ctx.clearRect(options.area.x1,options.area.y1,options.area.x2,options.area.y2);
+					} else {
+						_ctx.clearRect(x,y-1,w,HEIGHT-margins.top-margins.bottom+1);	
+					}
+					return;
+				}
+				//console.log("fillRect")
+				_ctx.save();
+				_ctx.fill="#000000";
+				_ctx.fillRect(x,y-1,w,HEIGHT-margins.top-margins.bottom+1);
+				_ctx.restore();
 			break;
 			case 'horizontal':
 				x = 0;//margins.left;
 				y = margins.top+box_w,
 				h = HEIGHT-margins.bottom-box_w-y;
 				
-				ctx.clearRect(x,y,WIDTH-margins.left-margins.right,h);
+				if(transparent) {
+					_ctx.clearRect(x,y,WIDTH-margins.left-margins.right,h);
+					return;
+				}
+
+				_ctx.clearRect(x,y,WIDTH-margins.left-margins.right,h);
 				
 				
 			break;
