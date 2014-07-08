@@ -103,6 +103,15 @@ canvas#ix {
 	top:0;
 	left:0;
 }
+div#ux {
+	position: absolute;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	background: rgba(255,255,255,0.1);
+	z-index: 999999;
+}
 .ititle {
 	position:absolute;
 	z-index:1010;
@@ -170,8 +179,8 @@ canvas#ix {
 }
 #tooltip div {
 	display: block;
-	min-width:100px;
-	max-width: 200px;
+	min-width:150px;
+	max-width: 250px;
 	left:-50%;
 	position:relative;
 	background: rgba(40,40,40,0.8);
@@ -179,6 +188,21 @@ canvas#ix {
 }
 #tooltip div span {
 	color:#fff;
+}
+#tooltip div span#flow {
+	color:#00F2FF;
+}
+span#dot {
+	display: block;
+	background: #00F2FF;
+	width:6px;
+	height:6px;
+	position: absolute;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	z-index: 99999;
+	margin-top: -3px;
+	margin-left: -3px;
 }
 .info {
 	position:absolute;

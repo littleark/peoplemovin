@@ -60,12 +60,13 @@
 			<div id="dst_title" class="ititle"></div>
 			<div id="tooltip">
 				<div>
-				<span id="flow"></span> people have moved from
-				<span id="from"></span>
-				to <span id="to"></span>
+					<span id="flow"></span> people have moved from
+					<span id="from"></span>
+					to <span id="to"></span>
 				</div>
-				<span class="dot"></span>
 			</div>
+			<span id="dot"></span>
+			<div id="ux"></div>
 		</div>
 		<div class="clearfix"></div>
 

@@ -353,10 +353,13 @@ function DataMovin(){
 		}
 	}
 	this.lookUp=function(y,lk_table_name) {
-		var lk_table=lookup[lk_table_name];
-		for(var i=y;i>=0;i--) {
-			if(lk_table[i])
+		var lk_table=lookup[lk_table_name],
+			i=y;
+		//for(var i=y;i>=0;i--) {
+		while(i--) {
+			if(lk_table[i]) {
 				return lk_table[i];
+			}
 		}
 	};
 	this.getAreas=function(){
@@ -608,20 +611,19 @@ function DataMovin(){
 		if(current.beziers.length>0) {
 			var distance=WIDTH;
 
-			for(var i=0;i<current.beziers.length;i++) {
+			var i = current.beziers.length;
+			while(i--) {
 				var d=jsBezier.distanceFromCurve({x:x,y:y},current.beziers[i].b);
 				if(d.distance<distance) {
 					bezier=current.beziers[i];
 					distance=d.distance;
 					location=d.location;
 
-					if(distance<5)
+					if(distance<2)
 						break;
 				}
 			}
 
-			//console.log(bezier.b);
-			//console.log(distance,location);
 			if(bezier) {
 				point=jsBezier.pointOnCurve(bezier.b,1-location);	
 			}

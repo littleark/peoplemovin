@@ -34,6 +34,7 @@
 			from:$("#tooltip #from"),
 			to:$("#tooltip #to"),
 			flow:$("#tooltip #flow"),
+			dot:$("#dot"),
 			current:""
 		}
 
@@ -86,7 +87,7 @@
                         				width:(canvas.width/ratio)+"px",
                         				height:(canvas.height/ratio)+"px"
                         			})
-                        			.appendTo($("#flows_container"));
+                        			//.appendTo($("#flows_container"));
 
                         		ix_ctx=ix[0].getContext("2d");
                         		ix_ctx.scale(ratio,ratio);
@@ -102,7 +103,7 @@
 
 
 								var dm_interactions=new DataMovinInteractions();
-								dm_interactions.init(datamovin,{canvas:ix[0]});
+								dm_interactions.init(datamovin,{canvas:$("#ux")[0]});
 								
 								dm_interactions.registerMouseEvents({
 									'click':showCountryInfo,
@@ -174,6 +175,11 @@
 				}).show();
 				//console.log(info)
 
+				tooltip.dot.css({
+					left:Math.round(info.p.x)+"px",
+					top:Math.round(info.p.y)+"px",
+				}).show();
+
 				if((info.i.flow.f+"_"+info.i.flow.t)==tooltip.current) {
 					//console.log((info.i.flow.f+"_"+info.i.flow.t),"==",tooltip.current)
 					return;
@@ -184,7 +190,7 @@
 				tooltip.from.text(window.countries[info.i.flow.f]);
 				tooltip.to.text(window.countries[info.i.flow.t]);
 				tooltip.flow.text(info.i.flow.q.toLocaleString());
-
+				return;
 				//console.log(datamovin);
 
 				info.i.ctx=ix_ctx;
@@ -209,21 +215,21 @@
 				
 
 			} else {
-				tooltip.current=null;
-				datamovin.clean(ix_ctx,{
-					transparent:true
-				});
-				tooltip.el.hide();
+				hideTooltip();	
 			}
 			
 
 		}
-		function showCountryName(country_info){
+		function hideTooltip() {
 			tooltip.current=null;
+			tooltip.el.hide();
+			return;
 			datamovin.clean(ix_ctx,{
 				transparent:true
 			});
-			tooltip.el.hide();
+		}
+		function showCountryName(country_info){
+			hideTooltip();
 			if(country_info && country_info.type) {
 				if(country_info.type=='src') {
 					
@@ -285,11 +291,7 @@
 			if(!relTarget || (relTarget && relTarget.className && relTarget.className!='ititle')) {
 				ititle.el.hide();
 			}
-			datamovin.clean(ix_ctx,{
-					transparent:true
-				});
-			tooltip.current=null;
-			tooltip.el.hide();
+			hideTooltip();
 		}
 		function handleMouseMove(e){
 			var relTarget=e.relatedTarget || e.toElement;
