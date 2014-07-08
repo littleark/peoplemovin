@@ -223,6 +223,7 @@
 		function hideTooltip() {
 			tooltip.current=null;
 			tooltip.el.hide();
+			tooltip.dot.hide();
 			return;
 			datamovin.clean(ix_ctx,{
 				transparent:true

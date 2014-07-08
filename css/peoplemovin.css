@@ -109,7 +109,7 @@ div#ux {
 	left:0;
 	right:0;
 	bottom:0;
-	background: rgba(255,255,255,0.1);
+	background: fo;
 	z-index: 999999;
 }
 .ititle {
@@ -176,6 +176,8 @@ div#ux {
 	font-style: normal;
 	font-weight: 300;
 	text-transform: uppercase;
+
+	display: none;
 }
 #tooltip div {
 	display: block;
@@ -193,7 +195,7 @@ div#ux {
 	color:#00F2FF;
 }
 span#dot {
-	display: block;
+	display: none;
 	background: #00F2FF;
 	width:6px;
 	height:6px;
