@@ -29,7 +29,7 @@ article, aside, figure, footer, header, hgroup, nav, section {display: block;}
 *:first-child+html .clearfix { zoom: 1; } /* IE7 */
 
 #wrapper {
-	width:940px;
+	width: 100%;
 	margin:0 auto;
 	height:100%;
 	clear:both;
@@ -67,7 +67,7 @@ header #social {
 	position:absolute;
 }
 header #social ul {
-	
+
 }
 header #social ul li {
 	float:left;
@@ -75,6 +75,7 @@ header #social ul li {
 }
 .canvas_container{
 	position:relative;
+	width: 100%;
 	clear:both;
 	min-height:4000px;
 }
@@ -87,6 +88,7 @@ canvas {
     -ms-interpolation-mode: nearest-neighbor;
 }
 canvas#flows {
+    width: 100%;
 	background:transparent;
 	position:relative;
 	z-index:1000;
@@ -128,11 +130,11 @@ div#ux {
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 	cursor: pointer;
-	
+
 	-webkit-box-shadow: 0px 0px 5px rgba(255,255,0,0.4);
 	-moz-box-shadow: 0px 0px 5px rgba(255,255,255,0.4);
 	box-shadow: 0px 0px 5px rgba(255,255,0,0.4);
-	
+
 }
 .ontop .ititle {
 	-webkit-box-shadow: none;
@@ -156,19 +158,19 @@ div#ux {
 
 	position: absolute;
 	z-index:99999;
-	
+
 	top:0;
 	left:0;
 
 
-	
+
 
 	/*-webkit-transition: left 100ms ease,top 100ms ease;
 	-moz-transition: left 100ms ease,top 100ms ease;
 	-ms-transition: left 100ms ease,top 100ms ease;
 	-o-transition: left 100ms ease,top 100ms ease;
 	transition: left 100ms ease,top 100ms ease;*/
-	
+
 
 	font-weight: normal;
 	color:#ddd;
@@ -226,7 +228,7 @@ span#dot {
 	border-top:1px dotted #666;
 }
 .horizontal .info {
-	
+
 }
 .info ul li a {
 	display:block;
@@ -460,7 +462,7 @@ span.not {
 	text-align:center;
 }
 #footer #logo {
-	
+
 	font-size:20px;
 }
 #footer #logo span {

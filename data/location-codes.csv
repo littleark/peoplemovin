@@ -1,0 +1,242 @@
+locationName,debtorCode,creditorCode
+Afghanistan,AFG,625
+African Dev. Bank,,913
+Albania,ALB,071
+Algeria,DZA,130
+Andorra,,025
+Angola,AGO,225
+Anguilla,,376
+Antigua,,377
+Argentina,ARG,425
+Armenia,ARM,091
+Aruba,,373
+Asian Dev. Bank   ,,915
+Australia,,801
+Austria,,001
+Azerbaijan,AZE,520
+Bahamas,,328
+Bahrain,,530
+Bangladesh,BGD,666
+Barbados,,329
+Belarus,BLR,086
+Belgium,,002
+Belize,BLZ,352
+Benin,BEN,236
+Bermuda,,331
+Bhutan,BTN,630
+Bolivia,BOL,428
+Bondholders,,BND
+Bosnia and Herzegovina,BIH,
+Bosnia-Herzegovina,,064
+Botswana,BWA,227
+Brazil,BRA,431
+Brunei,,725
+Bulgaria,BGR,072
+Burkina Faso,BFA,287
+Burundi,BDI,228
+Cabo Verde,CPV,230
+Cambodia,KHM,728
+Cameroon,CMR,229
+Canada,,301
+Cayman Islands,,386
+Central African Republic,CAF,231
+Chad,TCD,232
+Chile,,434
+China,CHN,730
+Colombia,COL,437
+Comoros,COM,233
+"Congo, Dem. Rep.",COD,235
+"Congo, Rep.",COG,234
+Costa Rica,CRI,336
+"Cote D`Ivoire, Republic Of",,247
+Cote d'Ivoire,CIV,
+Croatia,,062
+Cuba,,338
+Cyprus,,030
+Czech Republic,,068
+Czechoslovakia,,073
+Denmark,,003
+Djibouti,DJI,274
+Dominica,DMA,378
+Dominican Republic,DOM,340
+East Asia & Pacific (excluding high income),EAP,
+Ecuador,ECU,440
+Egypt,,142
+"Egypt, Arab Rep.",EGY,
+El Salvador,SLV,342
+Equatorial Guinea,,245
+Eritrea,ERI,271
+Estonia,,082
+Eswatini,SWZ,280
+Ethiopia,ETH,238
+Europe & Central Asia (excluding high income),ECA,
+Fiji,FJI,832
+Finland,,018
+France,,004
+French Polynesia,,840
+Gabon,GAB,239
+"Gambia, The",GMB,240
+Georgia,GEO,095
+German Dem. Rep.,,074
+"Germany, Fed.Rep. Of",,005
+Ghana,GHA,241
+Gibraltar,,035
+Greece,,040
+Grenada,GRD,381
+Guadeloupe,,345
+Guam,,734
+Guatemala,GTM,347
+Guinea,GIN,243
+Guinea-Bissau,GNB,244
+Guyana,GUY,446
+Haiti,HTI,349
+Honduras,HND,351
+Hong Kong,,735
+Hungary,,075
+IDA only,IDX,
+Iceland,,020
+India,IND,646
+Indonesia,IDN,738
+Inter-American Dev. Bank      ,,909
+International Monetary Fund,,907
+"Iran, Islamic Rep.",IRN,
+"Iran, Islamic Republic Of",,540
+Iraq,,543
+Ireland,,021
+Israel,,546
+Italy,,006
+Jamaica,JAM,354
+Japan,,701
+Jordan,JOR,549
+Kazakhstan,KAZ,521
+Kenya,KEN,248
+Kiribati,,836
+"Korea, D.P.R. Of",,740
+"Korea, Republic Of",,742
+Kosovo,XKX,044
+Kuwait,,552
+Kyrgyz Republic,KGZ,522
+Lao PDR,LAO,
+Lao Peoples Democratic Repub.,,745
+Latin America & Caribbean (excluding high income),LAC,
+Latvia,,083
+Least developed countries: UN classification,LDC,
+Lebanon,LBN,555
+Lesotho,LSO,249
+Liberia,LBR,251
+Libya,,133
+Lithuania,,084
+Low & middle income,LMY,
+Low income,LIC,
+Lower middle income,LMC,
+Luxembourg,,022
+Macao,,748
+Madagascar,MDG,252
+Malawi,MWI,253
+Malaysia,,751
+Maldives,MDV,655
+Mali,MLI,255
+Malta,,045
+Mauritania,MRT,256
+Mauritius,,257
+Mexico,MEX,358
+Micronesia Fed Sts,,860
+Middle East & North Africa (excluding high income),MNA,
+Middle income,MIC,
+Moldova,MDA,093
+Monaco,,026
+Mongolia,MNG,753
+Montenegro,MNE,065
+Morocco,MAR,136
+Mozambique,MOZ,259
+Multiple Lenders,,994
+Myanmar,MMR,635
+Namibia,,275
+Nepal,NPL,660
+Neth. Antilles,,361
+Netherlands,,007
+New Caledonia (Fr.),,850
+New Zealand,,820
+Nicaragua,NIC,364
+Niger,NER,260
+Nigeria,NGA,261
+North Macedonia,MKD,066
+Norway,,008
+Oman,,558
+Other Bilateral,,OBL
+Other Multilaterals,,OTM
+Other Multiple Lenders,,FCW
+Pacific Is. (Us),,858
+Pakistan,PAK,665
+Panama,,366
+Papua New Guinea,PNG,862
+Paraguay,PRY,451
+Peru,PER,454
+Philippines,PHL,755
+Poland,,076
+Portugal,,009
+Puerto Rico,,368
+Qatar,,561
+Reunion,,264
+Romania,,077
+Russian Federation,RUS,087
+Rwanda,RWA,266
+Samoa,WSM,880
+Sao Tome & Principe,,268
+Sao Tome and Principe,STP,
+Saudi Arabia,,566
+Senegal,SEN,269
+Serbia,SRB,060
+Seychelles,,270
+Sierra Leone,SLE,272
+Singapore,,761
+Slovak Republic,,069
+Slovenia,,061
+Solomon Islands,SLB,866
+Somalia,SOM,273
+South Africa,ZAF,216
+South Asia,SAS,
+Spain,,050
+Sri Lanka,LKA,640
+St. Kitts And Nevis,,382
+St. Lucia,LCA,383
+St. Vincent & The Grenadines,,384
+St. Vincent and the Grenadines,VCT,
+Sub-Saharan Africa (excluding high income),SSA,
+Sudan,SDN,278
+Surinam,,457
+Sweden,,010
+Switzerland,,011
+Syrian Arab Republic,SYR,573
+Tajikistan,TJK,524
+Tanzania,TZA,282
+Thailand,THA,764
+Timor-Leste,TLS,765
+Togo,TGO,283
+Tonga,TON,870
+Trinidad & Tobago,,375
+Tunisia,TUN,139
+Turkey,TUR,055
+Turkmenistan,TKM,525
+USSR,,078
+Uganda,UGA,285
+Ukraine,UKR,085
+United Arab Emirates,,576
+United Kingdom,,012
+United States,,302
+Upper middle income,UMC,
+Uruguay,,460
+Uzbekistan,UZB,523
+Vanuatu,VUT,854
+"Venezuela, RB",VEN,
+"Venezuela, Republic Bolivarian",,463
+Vietnam,VNM,769
+Virgin Is.(US),,379
+World,,WLD
+World Bank-IBRD                         ,,901
+World Bank-IDA                         ,,905
+"Yemen, Rep.",YEM,
+"Yemen, Republic Of",,580
+Yugoslavia,,063
+Zambia,ZMB,288
+Zimbabwe,ZWE,265
