@@ -6,7 +6,7 @@ export function Flows() {
   var contents = $("#contents");
   var tooltip = {};
 
-  var margins = { left: 0, top: 10, right: 0, bottom: 0, padding: { left: 0, right: 0 } };
+  var margins = { left: 170, top: 10, right: 170, bottom: 0, padding: { left: 0, right: 0 } };
 
   var canvas = {},
     ctx = {};
@@ -15,7 +15,7 @@ export function Flows() {
 
   var processing = false;
 
-  var datamovin = {};
+  let datamovin;
   var vertical = true;
   // var colors = new Colors();
 
@@ -38,7 +38,7 @@ export function Flows() {
 
 
   window.showCountries = function(countries) {
-    Finger.remove();
+    // Finger.remove();
     hideContents();
     datamovin.showCountries(countries);
   }
@@ -55,8 +55,9 @@ export function Flows() {
     console.log('pippo')
   }
   this.update = function() {
-    console.log('FLOWS UPDATE')
-    if (support_canvas()) {
+    if (datamovin && support_canvas()) {
+      console.log('FLOWS UPDATE')
+
       var canvas = datamovin.getCanvas(),
         ratio = datamovin.getRatio();
 
@@ -199,25 +200,25 @@ export function Flows() {
                     datamovin.drawOutFlow(connection[1], true);
                     var goToCountry = datamovin.getPointInfo(connection[1], 'src');
                     showCountryInfo(goToCountry, null, true);
-                    Finger.init(false);
+                    // Finger.init(false);
                     break;
                   case '#t':
                     datamovin.drawInFlow(connection[1], true);
                     var goToCountry = datamovin.getPointInfo(connection[1], 'dst');
                     showCountryInfo(goToCountry, null, true);
-                    Finger.init(false);
+                    // Finger.init(false);
                     break;
                   case '#c':
                     datamovin.drawFlowFromTo(connection[1], connection[2], true);
                     var goToCountry = datamovin.getPointInfo(connection[1], 'src');
                     showCountryInfo(goToCountry, connection[2], true);
-                    Finger.init(false);
+                    // Finger.init(false);
                     break;
                   default:
-                    Finger.init(true);
+                  // Finger.init(true);
                 }
               } else {
-                Finger.init(true);
+                // Finger.init(true);
               }
 
 
@@ -319,7 +320,8 @@ export function Flows() {
     if (country_info && country_info.type) {
       if (country_info.type == 'src') {
 
-        $("#src_title").html(window.countries[country_info.name]).show();
+        // $("#src_title").html(window.countries[country_info.name]).show();
+        $("#src_title").html(country_info.name).show();
         $("#dst_title").hide();
         console.log('CONTENTS', contents, country_info)
         // if (contents.classList.contains("ontop")) {
@@ -345,7 +347,8 @@ export function Flows() {
 
       } else {
 
-        $("#dst_title").html(window.countries[country_info.name]).show();
+        // $("#dst_title").html(window.countries[country_info.name]).show();
+        $("#dst_title").html(country_info.name).show();
         $("#src_title").hide();
         position = {
           top: (country_info.y + country_info.h / 2 - $("#dst_title").height() / 2 - 4) + "px"
@@ -385,7 +388,7 @@ export function Flows() {
     var relTarget = e.relatedTarget || e.toElement;
   }
   function showCountryInfo(country_info, other, animate) {
-    Finger.remove();
+    // Finger.remove();
     $(".info").hide();
     if (country_info == -1) {
       window.location.hash = "!";
@@ -473,7 +476,7 @@ export function Flows() {
       current: ""
     }
 
-    $("#dst_info").css("left", "745px");//.offset({top:$("#dst_info").offset().top,left:$("#flows").offset().left+canvas.width})
+    // $("#dst_info").css("left", "745px");//.offset({top:$("#dst_info").offset().top,left:$("#flows").offset().left+canvas.width})
     $(".more").click(function(e) {
       e.preventDefault();
       var ul = $(this).parent().parent().find(".hidden");
@@ -526,7 +529,7 @@ export function Flows() {
 
     $(".info ul li a.il").live("click", function(e) {
       e.preventDefault();
-      Finger.remove();
+      // Finger.remove();
 
       var $this = $(this);
 
@@ -590,7 +593,7 @@ export function Flows() {
 
     $(".par ul li a").click(function(e) {
       e.preventDefault();
-      Finger.remove();
+      // Finger.remove();
       if ($("#contents").css("opacity") == 1) {
         var country = this.id.split("_");
 
@@ -628,11 +631,13 @@ export function Flows() {
     $("#wrapper").removeClass("ontop");
   }
   function handleProcessing(status, direction) {
+    const title = $("#" + direction + "_title");
     if (status == 'start') {
-      var title = $("#" + direction + "_title");
-      title.html(title.html() + " <img src=\"/assets/loading.gif\"/>");
+      title.html(title.html() + " <img src=\"/img/loading.gif\"/>");
     }
     if (status == 'end') {
+      console.log('handleProcessing', status, direction)
+      title.hide();
     }
   }
 };
