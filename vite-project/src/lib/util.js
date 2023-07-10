@@ -68,7 +68,7 @@ var Colors = function() {
   }
 }
 function iterateSorted(a, reference) {
-
+  console.log('iterateSorted', a)
   var keys = [],
     tmp_values = [],
     tmp_functions = [];
@@ -90,6 +90,7 @@ function iterateSorted(a, reference) {
   for (var i = 0; i < keys.length; i++) {
     sorted[keys[i]] = a[keys[i]];
   }
+  console.log('sorted')
   return sorted;
 }
 /*Array.prototype.remove=function(i){

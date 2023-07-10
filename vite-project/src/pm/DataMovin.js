@@ -25,6 +25,7 @@
  *
  * Date: Sun Aug 01 00:05:56 2011 (CEST) +0200
  */
+import * as d3 from 'd3';
 
 export default function DataMovin() {
 
@@ -32,6 +33,8 @@ export default function DataMovin() {
     requestId = null,
     canvas,
     ctx;
+  let offscreenCanvas,
+    offscreenCtx;
 
   var src = {},
     dst = {},
@@ -56,6 +59,10 @@ export default function DataMovin() {
   canvas = document.createElement("canvas");
   ctx = canvas.getContext("2d");
 
+  offscreenCanvas = document.createElement("canvas");
+  offscreenCtx = offscreenCanvas.getContext("2d");
+  // offscreenCanvas.globalCompositeOperation = 'xor';
+
   var devicePixelRatio = window.devicePixelRatio || 1,
     backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
       ctx.mozBackingStorePixelRatio ||
@@ -70,14 +77,19 @@ export default function DataMovin() {
 
       label_reference = options.labels;
 
-      var heights = initFlows(options.flows)
+      console.log('DataMovin.init', canvas, options)
+
+      // var heights = initFlows(options.flows)
+      const heights = options.flowsWithSizes;
+      src = heights.src;
+      dst = heights.dst;
       if (!heights)
         return false;
 
 
-      step = options.step || step;
-      box_w = options.box_w || box_w;
-      margins = options.margins || margins;
+      step = options.step ?? step;
+      box_w = options.box_w ?? box_w;
+      margins = options.margins ?? margins;
 
 
 
@@ -87,17 +99,27 @@ export default function DataMovin() {
       };
 
       // canvas=document.createElement("canvas");
-      canvas = document.getElementById("flows");
-      const flows_container = document.getElementById('flows_container');
+      // canvas = document.getElementById("flows");
+      const flows_container = document.getElementById('canvasContainer');
+
+
+
       canvas.width = flows_container.offsetWidth;
+
       ctx = canvas.getContext("2d");
 
       ctx.lineCap = 'butt';
 
-      ctx.imageSmoothingEnabled = false;
-      ctx.webkitImageSmoothingEnabled = false;
-      ctx.mozImageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = true;
+      // ctx.globalCompositeOperation = 'lighter';
+      // offscreenCtx.globalCompositeOperation = 'lighter';
+      // ctx.webkitImageSmoothingEnabled = false;
+      // ctx.mozImageSmoothingEnabled = false;
 
+      // offscreenCtx.lineCap = ctx.lineCap;
+      // offscreenCtx.imageSmoothingEnabled = ctx.imageSmoothingEnabled;
+      // offscreenCtx.webkitImageSmoothingEnabled = ctx.webkitImageSmoothingEnabled;
+      // offscreenCtx.mozImageSmoothingEnabled = ctx.mozImageSmoothingEnabled;
 
 
       orientation = options.orientation || orientation;
@@ -109,12 +131,15 @@ export default function DataMovin() {
         //+100 fix a bug in chrome when using highDPI scale deviceRatio
         canvas.height += 100;
       }
-
+      console.log('WIDTH OF THE CANVAS', canvas.width)
       WIDTH = canvas.width;
       HEIGHT = canvas.height;
 
       this.ctx = ctx;
       this.margins = margins;
+
+      offscreenCanvas.width = canvas.width;
+      offscreenCanvas.height = canvas.height;
 
       if (devicePixelRatio !== backingStoreRatio) {
         canvas.width = WIDTH * ratio;
@@ -128,7 +153,17 @@ export default function DataMovin() {
 
         ctx.scale(ratio, ratio);
 
+        offscreenCanvas.width = canvas.width;
+        offscreenCanvas.height = canvas.height;
+
+        // offscreenCanvas.style.setProperty("width", (WIDTH) + "px");
+        // offscreenCanvas.style.setProperty("height", (HEIGHT) + "px");
+
+        // offscreenCtx.scale(ratio, ratio);
+
       }
+      // offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.width);
+      // offscreenCtx = offscreenCanvas.getContext("2d");
 
       return this;
     } else {
@@ -136,6 +171,7 @@ export default function DataMovin() {
     }
   }
   this.update = function() {
+    // return;
     console.log('DATAMOVIN UPDATE')
     canvas = document.getElementById("flows");
     const flows_container = document.getElementById('flows_container');
@@ -199,79 +235,6 @@ export default function DataMovin() {
   this.checkCurrent = function(point, type) {
     return (current[type].length > 0 && current[type][0] == point);
   }
-  function initFlows(flows) {
-    if (!flows)
-      return null;
-
-    var src_values = { max: 0, min: 10000 },
-      dst_values = { max: 0, min: 1 };
-
-    for (var s in flows) {
-      var source = flows[s];
-      source.flow = 0;
-      for (var d in source.flows) {
-        source.flow += source.flows[d].v;
-        if (!dst[d])
-          dst[d] = { flow: 0, flows: {} };
-        dst[d].flow += source.flows[d].v;
-        dst[d].flows[s] = {
-          flow: source.flows[d].v,
-          i: {
-            q: source.flows[d].f,
-            f: s,
-            t: d
-          }
-        };
-        dst_values.max = Math.max(dst_values.max, dst[d].flow);
-        source.flows[d] = {
-          flow: source.flows[d].v,
-          i: {
-            q: source.flows[d].f,
-            f: s,
-            t: d
-          }
-        };
-      }
-      src[s] = source;
-
-      src_values.max = Math.max(source.flow, src_values.max);
-      src_values.min = Math.min(source.flow, src_values.min);
-    }
-
-    var min = Math.min(src_values.min, dst_values.min);
-    var max = Math.max(src_values.max, dst_values.max);
-    console.log(`[${min},${max}]`)
-    const colorScale = d3.scaleLinear().range([0, 1]).domain([min, max / 10]);
-    const getHSL = (rgb) => {
-      const hsl = d3.hsl(rgb);
-      return `${hsl.h},${hsl.s * 100}%,${hsl.l * 100}%`;
-    }
-    var tot_from = 0, tot_to = 0;
-    for (var s in src) {
-      // src[s].color = colors.getHSL(Math.round(Math.map(src[xs].flow, min, max, 110, 10)));
-      // console.log(s, src[s].flow, colorScale(src[s].flow))
-      // src[s].color = getHSL(d3.interpolateReds(colorScale(src[s].flow))); // colors.getHSL(Math.round(logscale(src[s].flow, 0, max / 2, 120, 1)));
-      src[s].color = colors.getHSL(Math.round(logscale(src[s].flow, 0, max / 2, 120, 1)));
-      tot_from += src[s].flow + step;
-    }
-    for (var d in dst) {
-      //dst[d].color=colors.getColor(Math.round(Math.map(dst[d].flow,dst_values.min,dst_values.max,50,colors.length-50)));
-      dst[d].color = colors.getHSL(Math.round(Math.map(dst[d].flow, min, max, 110, 10)));
-      // dst[d].color = getHSL(d3.interpolateReds(colorScale(dst[d].flow))); // colors.getHSL(Math.round(logscale(dst[d].flow, 0, max / 2, 120, 1)));
-      tot_to += dst[d].flow + step;
-    }
-    dst = iterateSorted(dst, label_reference);
-
-
-    legend = {
-      src_min: 0,
-      src_max: max / 2,
-      dst_min: 120,
-      dst_max: 1
-    }
-
-    return { from: tot_from, to: tot_to };
-  }
   function logscale(value, src_min, src_max, dst_min, dst_max) {
 
     //return Math.map(value,src_min,src_max,dst_min,dst_max)
@@ -327,6 +290,7 @@ export default function DataMovin() {
   function drawBoxes(boxes, start_x, start_y, labels) {
     var index = 0, __y = start_y;
     console.log('BOXES', boxes)
+    // alert(boxes)
     for (var i in boxes) {
       var s = boxes[i];
       lookup[labels.type][Math.floor(__y) - Math.floor(step / 2)] = i;
@@ -334,10 +298,10 @@ export default function DataMovin() {
         boxes[i].y = __y;
       if (!boxes[i].x)
         boxes[i].x = start_x;
-      //drawBox(start_x, __y, box_w, s.flow,{fill: "rgb("+s.color+")", stroke: "#f00", opacity: 1,"stroke-width":0});
-      drawBox(start_x, __y, box_w, s.flow, { fill: "hsl(" + s.color + ")", stroke: "#f00", opacity: 1, "stroke-width": 0 });
-      if (labels)
-        drawLabel(i, start_x, __y, { w: box_w, h: s.flow }, labels)
+
+      // drawBox(start_x, __y, box_w, s.flow, { fill: "hsl(" + s.color + ")", stroke: "#f00", opacity: 1, "stroke-width": 0 });
+      // if (labels)
+      //   drawLabel(i, start_x, __y, { w: box_w, h: s.flow }, labels)
       for (var j in s.flows) {
 
         var to = boxes[i].flows[j];
@@ -465,7 +429,8 @@ export default function DataMovin() {
       color: src[from].color,
       color2: dst[to].color,
       "stroke-width": __from.flow,
-      flow: __from.i
+      flow: __from.i,
+      ctx, // : offscreenCtx,
     };
 
     if (orientation == 'horizontal') {
@@ -477,14 +442,19 @@ export default function DataMovin() {
   }
   const drawOutFlow = (flows, point, callback) => {
     console.log('FLOWS', flows)
+    // ctx.globalCompositeOperation = "source-over";
+    // this.clean(offscreenCtx);
+    // this.clean(ctx);
+    // ctx.globalCompositeOperation = "screen";
     flows.forEach(c => this.drawFlowFromTo(point, c));
+    // ctx.drawImage(offscreenCanvas, 0, 0);
     callback();
     // if (flows.length) {
     //   var c = flows.shift();
     //   self.drawFlowFromTo(point, c);
 
     //   requestId = requestAnimationFrame(function() {
-    //   drawOutFlow(flows, point, callback)
+    //     drawOutFlow(flows, point, callback)
     //   });
 
     // } else {
@@ -511,7 +481,12 @@ export default function DataMovin() {
   }
   const drawInFlow = (flows, point, callback) => {
     console.log('FLOWS', flows)
+    // ctx.globalCompositeOperation = "source-over";
+    // this.clean(offscreenCtx);
+    // this.clean(ctx);
+    // ctx.globalCompositeOperation = "lighter";
     flows.forEach(c => this.drawFlowFromTo(c, point));
+    // ctx.drawImage(offscreenCanvas, 0, 0);
     callback();
     // if (flows.length) {
     //   var c = flows.shift();
@@ -571,6 +546,8 @@ export default function DataMovin() {
     ctx.fillStyle = options.fill;
     ctx.fillRect(x, y - 0.5, w, h + 1);
     ctx.restore();
+
+
   }
   /*
     x,y => src
@@ -590,11 +567,12 @@ export default function DataMovin() {
     //_ctx.save();
     if (info.color2) {
       var g = _ctx.createLinearGradient(x, y, zx, zy);
-      g.addColorStop(0, "hsla(" + info.color + ",0.75)");
-      g.addColorStop(1, "hsla(" + info.color2 + ",0.75)");
+      console.log(info)
+      g.addColorStop(0, "hsla(" + info.color + ",0.8)");
+      g.addColorStop(1, "hsla(" + info.color2 + ",0.8)");
       _ctx.strokeStyle = g;
     } else {
-      _ctx.strokeStyle = "hsla(" + info.color + ",0.75)";
+      _ctx.strokeStyle = "hsla(" + info.color + ",0.8)";
     }
     _ctx.lineWidth = (info['stroke-width'] > 1 ? info['stroke-width'] : 0.5);
 

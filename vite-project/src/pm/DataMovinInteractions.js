@@ -99,6 +99,7 @@ export default function DataMovinInteractions() {
     };
   }
   this.registerMouseEvents = function(callbacks) {
+    console.log('registerMouseEvents', callbacks)
     for (var i in callbacks) {
       eventsCallbacks[i] = callbacks[i];
     }
@@ -126,6 +127,7 @@ export default function DataMovinInteractions() {
       eventsCallbacks.document_scrollwheel.call(e, e);
   }
   function canvasMouseMoveHandlerVertical(e) {
+
     e = initEvent(e);
 
     var point,
@@ -151,9 +153,7 @@ export default function DataMovinInteractions() {
 
       point = datamovin.findBezier(mouse.x, mouse.y);
 
-      console.log('point', point);
-
-      if (eventsCallbacks.mouseover) {
+      if (eventsCallbacks.mouseoverbezier) {
         eventsCallbacks.mouseoverbezier.call(e, point);
       }
     } else if (mouse.x >= areas.dst.x1 && mouse.x <= areas.dst.x2) {
@@ -200,10 +200,11 @@ export default function DataMovinInteractions() {
     e = initEvent(e);
 
     var point;
-    mouse = getPosition(e, canvas);
-
+    const mouse = getPosition(e, canvas);
+    console.log('click', mouse, areas)
     if (mouse.x >= areas.src.x1 && mouse.x <= areas.src.x2) {
       point = datamovin.lookUp(mouse.y, "src");
+      console.log('src', 'point', point)
       if (!datamovin.checkCurrent(point, "src")) {
         eventsCallbacks.processing.call(e, 'start', 'src');
         setTimeout(function tm() {
@@ -220,6 +221,7 @@ export default function DataMovinInteractions() {
       }
     } else if (mouse.x >= areas.dst.x1 && mouse.x <= areas.dst.x2) {
       point = datamovin.lookUp(mouse.y, "dst");
+      console.log('dst', 'point', point)
       if (!datamovin.checkCurrent(point, "dst")) {
         eventsCallbacks.processing.call(e, 'start', 'dst');
         setTimeout(function tm() {
