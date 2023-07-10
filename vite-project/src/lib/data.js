@@ -11,7 +11,8 @@ export const continentColors = {
 
 let continentMap = [];
 
-export async function getMigration() {
+export async function getMigration(showContinents = false) {
+  console.log('GET MIGRATION', showContinents)
   // const locationCodes = await d3.csv('/data/location-codes.csv');
   // console.log('LOCATION CODES', locationCodes)
   const continentCountryData = await d3.csv('/data/continents.csv');
@@ -29,9 +30,12 @@ export async function getMigration() {
     .filter(d => {
       const src = d.origin.replace(/^[ \t]+/, '').replace(/[\*]+/gi, '').trim();
       const dst = d.destination.replace(/^[ \t]+/, '').replace(/[\*]+/gi, '').trim();
-      return continents.indexOf(src) > -1 && continents.indexOf(dst) > -1
-      // return continents.indexOf(src) === -1 && continents.indexOf(dst) === -1
+      if (showContinents) {
+        return continents.indexOf(src) > -1 && continents.indexOf(dst) > -1
+      }
       return continentMap[src] && continentMap[dst]
+      // return continents.indexOf(src) === -1 && continents.indexOf(dst) === -1
+
     })
     .reduce((acc, d) => {
       const row = {

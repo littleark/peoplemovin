@@ -10,6 +10,7 @@
     let dot;
     let flowsWithSizes;
     let datamovin;
+    export let showContinents;
 
     const continentColors = {
       'ASIA': '#8dd3c7',
@@ -92,7 +93,7 @@
     }
 
     onMount(async () => {
-        flowData = await getMigration();
+        flowData = await getMigration(showContinents);
         console.log('FlowsWrapper', flowData);
 
         datamovin = new DataMovin();
@@ -244,6 +245,7 @@
         transform: translateY(-50%);
         pointer-events: none;
         width:170px;
+        font-family: sans-serif;
     }
     .boxes ul li:hover span {
         color: #ffff00;

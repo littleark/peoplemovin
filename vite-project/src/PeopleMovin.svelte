@@ -42,15 +42,8 @@ afterUpdate(() => {
 
 <main>
     <div id="flows_container" class="canvas_container clearfix">
-        {#if windowWidth}
-       	    <p>{windowWidth}</p>
-        {/if}
-        <!--<div id="flows">
-            <div id="sources"/>
-            <canvas width="100%" class="datamovin"></canvas>
-            <div id="destinatons"/>
-        </div>-->
-        <FlowsWrapper />
+        <FlowsWrapper showContinents={true} />
+        <FlowsWrapper showContinents={false} />
         <div id="src_title" class="ititle"></div>
         <div id="dst_title" class="ititle"></div>
         <div id="tooltip">
