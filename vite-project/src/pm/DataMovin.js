@@ -131,7 +131,7 @@ export default function DataMovin() {
         //+100 fix a bug in chrome when using highDPI scale deviceRatio
         canvas.height += 100;
       }
-      console.log('WIDTH OF THE CANVAS', canvas.width)
+      // console.log('WIDTH OF THE CANVAS', canvas.width)
       WIDTH = canvas.width;
       HEIGHT = canvas.height;
 
@@ -172,12 +172,12 @@ export default function DataMovin() {
   }
   this.update = function() {
     // return;
-    console.log('DATAMOVIN UPDATE')
+    // console.log('DATAMOVIN UPDATE')
     canvas = document.getElementById("flows");
     const flows_container = document.getElementById('flows_container');
     canvas.width = flows_container.offsetWidth;
 
-    console.log('SETTING WIDTH TO', flows_container.offsetWidth)
+    // console.log('SETTING WIDTH TO', flows_container.offsetWidth)
     WIDTH = canvas.width;
 
     if (devicePixelRatio !== backingStoreRatio) {
@@ -189,7 +189,7 @@ export default function DataMovin() {
 
       canvas.style.setProperty("width", (WIDTH) + "px");
       canvas.style.setProperty("height", (HEIGHT) + "px");
-      console.log('SET WIDTH TO', WIDTH)
+      // console.log('SET WIDTH TO', WIDTH)
       ctx.scale(ratio, ratio);
 
     }
@@ -289,7 +289,7 @@ export default function DataMovin() {
   }
   function drawBoxes(boxes, start_x, start_y, labels) {
     var index = 0, __y = start_y;
-    console.log('BOXES', boxes)
+    // console.log('BOXES', boxes)
     // alert(boxes)
     for (var i in boxes) {
       var s = boxes[i];
@@ -421,16 +421,17 @@ export default function DataMovin() {
 
     if (clean) {
       this.clean();
-      current.src.push(from);
-      current.dst.push(to);
+      this.clean(offscreenCtx);
     }
+    current.src.push(from);
+    current.dst.push(to);
 
     var info = {
       color: src[from].color,
       color2: dst[to].color,
       "stroke-width": __from.flow,
       flow: __from.i,
-      ctx, // : offscreenCtx,
+      // ctx: offscreenCtx,
     };
 
     if (orientation == 'horizontal') {
@@ -440,10 +441,13 @@ export default function DataMovin() {
     }
 
   }
-  const drawOutFlow = (flows, point, callback) => {
-    console.log('FLOWS', flows)
+  const drawOutFlow = (flows, point, clean, callback) => {
+    // console.log('FLOWS', flows)
     // ctx.globalCompositeOperation = "source-over";
-    // this.clean(offscreenCtx);
+    if (clean) {
+      this.clean(ctx);
+      this.clean(offscreenCtx);
+    }
     // this.clean(ctx);
     // ctx.globalCompositeOperation = "screen";
     flows.forEach(c => this.drawFlowFromTo(point, c));
@@ -466,23 +470,29 @@ export default function DataMovin() {
       window.cancelAnimationFrame(requestId);
       requestId = null;
     }
-    if (clean)
+    if (clean) {
       this.clean();
+      this.clean(offscreenCtx);
+    }
+
     var flows = [];
     for (var c in src[point].flows) {
       flows.push(c);
     }
-    console.log('DRAW OUT FLOW')
-    console.log('CURRENT', current)
-    console.log('POINT', point)
-    drawOutFlow(flows, point, function() {
+    // console.log('DRAW OUT FLOW')
+    // console.log('CURRENT', current)
+    // console.log('POINT', point)
+    drawOutFlow(flows, point, clean, function() {
       current.src.push(point);
     });
   }
-  const drawInFlow = (flows, point, callback) => {
-    console.log('FLOWS', flows)
+  const drawInFlow = (flows, point, clean, callback) => {
+    // console.log('FLOWS', flows)
     // ctx.globalCompositeOperation = "source-over";
-    // this.clean(offscreenCtx);
+    if (clean) {
+      this.clean(offscreenCtx);
+      this.clean();
+    }
     // this.clean(ctx);
     // ctx.globalCompositeOperation = "lighter";
     flows.forEach(c => this.drawFlowFromTo(c, point));
@@ -504,14 +514,17 @@ export default function DataMovin() {
       window.cancelAnimationFrame(requestId);
       requestId = null;
     }
-    if (clean)
+    if (clean) {
+      this.clean(offscreenCtx);
       this.clean();
+    }
+
     var flows = [];
     if (dst[point] && dst[point].flows) {
       for (var c in dst[point].flows) {
         flows.push(c);
       }
-      drawInFlow(flows, point, function() {
+      drawInFlow(flows, point, clean, function() {
         current.dst.push(point);
       });
     }
@@ -564,21 +577,19 @@ export default function DataMovin() {
     y = Math.round(y);
     zx = Math.round(zx);
     zy = Math.round(zy);
-    //_ctx.save();
-    if (info.color2) {
+    // _ctx.save();
+    console.log('drawCurve', info.flow.f, '->', info.flow.t, info.color)
+    if (info.color) {
       var g = _ctx.createLinearGradient(x, y, zx, zy);
-      console.log(info)
-      g.addColorStop(0, "hsla(" + info.color + ",0.8)");
-      g.addColorStop(1, "hsla(" + info.color2 + ",0.8)");
+      g.addColorStop(0, "hsla(" + info.color + ",0.5)");
+      g.addColorStop(1, "hsla(" + info.color2 + ",0.5)");
       _ctx.strokeStyle = g;
     } else {
-      _ctx.strokeStyle = "hsla(" + info.color + ",0.8)";
+      _ctx.strokeStyle = "hsla(" + info.color + ",0.5)";
     }
     _ctx.lineWidth = (info['stroke-width'] > 1 ? info['stroke-width'] : 0.5);
 
     _ctx.beginPath();
-
-
     if (orientation == 'horizontal') {
       _ctx.moveTo(x, y)
       _ctx.bezierCurveTo(
@@ -587,15 +598,14 @@ export default function DataMovin() {
         zx, zy
       );
     } else {
-      /*
-      _ctx.moveTo(x,y);
-      _ctx.bezierCurveTo(
-        Math.round(zx-(zx-x)/2), y,
-        Math.round(x+(zx-x)/2), zy,
-        zx, zy
-      );
-      */
+      _ctx.moveTo(x, y);
+      // _ctx.bezierCurveTo(
+      //   Math.round(zx - (zx - x) / 2), y,
+      //   Math.round(x + (zx - x) / 2), zy,
+      //   zx, zy
+      // );
       splitBezier(_ctx, x, y, zx, zy);
+
       current.beziers.push(
         {
           b: [
@@ -622,7 +632,7 @@ export default function DataMovin() {
     }
     _ctx.stroke();
     //_ctx.closePath();
-    //_ctx.restore();
+    // _ctx.restore();
   }
   this.drawCurve = function(x, y, zx, zy, info) {
     drawCurve(x, y, zx, zy, info)

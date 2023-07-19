@@ -12,7 +12,7 @@ export const continentColors = {
 let continentMap = [];
 
 export async function getMigration(showContinents = false) {
-  console.log('GET MIGRATION', showContinents)
+  // console.log('GET MIGRATION', showContinents)
   // const locationCodes = await d3.csv('/data/location-codes.csv');
   // console.log('LOCATION CODES', locationCodes)
   const continentCountryData = await d3.csv('/data/continents.csv');
@@ -23,7 +23,7 @@ export async function getMigration(showContinents = false) {
   const continents = ['ASIA', 'AFRICA', 'EUROPE', 'NORTHERN AMERICA', 'OCEANIA', 'LATIN AMERICA AND THE CARIBBEAN']
 
   const rows = await d3.csv('/data/data.csv');
-  console.log('ROWS', rows)
+  // console.log('ROWS', rows)
   const data = rows
     // .filter(d => +d.code_origin < 900 && +d.code_destination < 900)
     // .filter(d => +d.code_origin >= 900 && +d.code_destination >= 900 && d.origin !== 'WORLD' && d.destination !== 'WORLD')
@@ -67,7 +67,7 @@ export async function getMigration(showContinents = false) {
       return acc;
     }, []);
 
-  console.log('DATA DATA', data)
+  // console.log('DATA DATA', data)
 
   const allNames = data.reduce((acc, d) => {
     if (acc.indexOf(d.src) === -1) {
@@ -78,7 +78,7 @@ export async function getMigration(showContinents = false) {
     }
     return acc;
   }, [])
-  console.log('allNames', allNames)
+  // console.log('allNames', allNames)
   const flowExtent = d3.extent(data, row => row.total[row.total.latestYear])
   const flowScale = d3.scaleLinear().domain([0, flowExtent[1]]).range([0, 100])
 
@@ -178,7 +178,7 @@ export function initFlows(flows, step = 10) {
 
   var min = Math.min(src_values.min, dst_values.min);
   var max = Math.max(src_values.max, dst_values.max);
-  console.log(`[${min},${max}]`)
+  // console.log(`[${min},${max}]`)
   const colorScale = d3.scaleLinear().range([0, 1]).domain([min, max / 10]);
   const getHSL = (rgb) => {
     const hsl = d3.hsl(rgb);

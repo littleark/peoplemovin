@@ -8,9 +8,19 @@
     let canvas;
     let ux;
     let dot;
+    let tooltip = {
+        from: '',
+        to: '',
+        flow: '',
+    };
+    let tooltipNode;
+    let tooltipFrom;
+    let tooltipTo;
+    let tooltipFlow;
     let flowsWithSizes;
     let datamovin;
     export let showContinents;
+    export let preselected = null;
 
     const continentColors = {
       'ASIA': '#8dd3c7',
@@ -23,45 +33,44 @@
 
     const margins = { left: 0, top: 10, right: 0, bottom: 0, padding: { left: 0, right: 0 } };
     function showCountryInfo(country_info, other, animate = false) {
-        console.log('showCountryInfo', country_info, other);
+        // console.log('showCountryInfo', country_info, other);
 
     }
-    function showFlowInfo(info) {
-
+    function showFlowInfo(info, areas) {
+        console.log(areas)
         const tooltip = {
-            // el: $("#tooltip"),
-            // from: $("#tooltip #from"),
-            // to: $("#tooltip #to"),
-            // flow: $("#tooltip #flow"),
-            dot: dot,
+            dot,
             current: ""
         }
 
 
       if (info.p) {
-        /*
-        tooltip.el.css({
-          left: Math.round(info.p.x) + "px",
-          top: Math.round(info.p.y - 60) + "px",
-        }).show();
-        */
-        // console.log('showFlowInfo', info);
-        // console.log(dot)
+        tooltipNode.style.left = Math.round(info.p.x) + "px";
+        tooltipNode.style.top = Math.round(info.p.y) + "px";
+
+        if(info.p.x < 100) {
+            tooltipNode.style.transform = 'translate(0, -100%)';
+        } else if(info.p.x > areas.dst.x1 - 100) {
+            tooltipNode.style.transform = 'translate(-100%, -100%)';
+        } else {
+            tooltipNode.style.transform = 'translate(-50%, -100%)';
+        }
+
         dot.style.left = Math.round(info.p.x) + "px";
         dot.style.top = Math.round(info.p.y) + "px";
         dot.style.display = 'block';
 
-        /*
-        if ((info.i.flow.f + "_" + info.i.flow.t) == tooltip.current) {
+
+        if ((info.i.flow.f + "_" + info.i.flow.t) === tooltip.current) {
           return;
         }
 
         tooltip.current = info.i.flow.f + "_" + info.i.flow.t;
-        tooltip.from.text(info.i.flow.f);
-        tooltip.to.text(info.i.flow.t);
-        tooltip.flow.text(info.i.flow.q.toLocaleString());
+        tooltipFrom = info.i.flow.f;
+        tooltipTo = info.i.flow.t;
+        tooltipFlow = info.i.flow.q.toLocaleString();
         return;
-        */
+
         /*
         // ATTEMPT TO PAINT HOVERED CURVE
         info.i.ctx = ix_ctx;
@@ -94,11 +103,11 @@
 
     onMount(async () => {
         flowData = await getMigration(showContinents);
-        console.log('FlowsWrapper', flowData);
+        // console.log('FlowsWrapper', flowData);
 
         datamovin = new DataMovin();
         flowsWithSizes = initFlows(flowData);
-        console.log('flowsWithSizes', flowsWithSizes);
+        // console.log('flowsWithSizes', flowsWithSizes);
 
         if (datamovin.init(canvas, {
             flows: flowData,
@@ -113,6 +122,11 @@
 
             datamovin.drawSources();
             datamovin.drawDestinations();
+            if(preselected?.length) {
+                preselected.forEach(d => {
+                    datamovin[d.direction === 'from' ? 'drawOutFlow' : 'drawInFlow'](d.country,false)
+                })
+            }
 
             // datamovin.addLegend();
 
@@ -173,7 +187,12 @@
 
 </script>
 <main>
-    <div id="flows">
+    <div class="flows-header">
+        <div class="boxes">ORIGINS</div>
+        <div class="between"></div>
+        <div class="boxes">DESTINATIONS</div>
+    </div>
+    <div class="flows">
         <div id="sources" class="boxes">
             <ul class="src">
             {#each Object.values(flowsWithSizes?.src ?? {}) as flow, i}
@@ -187,6 +206,18 @@
         <div id="canvasContainer">
             <canvas bind:this={canvas} width="100%" class="datamovin"></canvas>
             <span bind:this={dot} id="dot"></span>
+            <div bind:this={tooltipNode} class="tooltip">
+                {#if tooltipFrom !== tooltipTo}
+                    <span class="tooltip-flow">{tooltipFlow}</span>
+                    have moved from <br/>
+                    <span>{tooltipFrom}</span>
+                    to
+                    <span>{tooltipTo}</span>
+                {:else}
+                    <span class="tooltip-flow">{tooltipFlow}</span>
+                    have moved within <span>{tooltipFrom}</span>
+                {/if}
+            </div>
             <div bind:this={ux} id="ux"></div>
         </div>
         <div id="destinatons" class="boxes">
@@ -202,15 +233,23 @@
     </div>
 </main>
 <style>
-    #flows {
+    main {
+        margin-top: 50px;
+    }
+    .flows,
+    .flows-header {
         display: flex;
     }
+    .between,
     #canvasContainer {
         position: relative;
         width: calc(100% - 340px);
     }
     .boxes {
         width: 170px;
+    }
+    .flows-header .boxes:first-child {
+        text-align: right;
     }
     .boxes ul {
         list-style: none;
@@ -246,9 +285,14 @@
         pointer-events: none;
         width:170px;
         font-family: sans-serif;
+
+        text-shadow:
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;
     }
     .boxes ul li:hover span {
-        color: #ffff00;
         font-weight: bold;
     }
     .boxes ul.src li span {
@@ -272,6 +316,33 @@
     	margin-top: -3px;
     	margin-left: -3px;
     }
+    .tooltip {
+       	font-family: 'Open Sans', arial, serif;
+
+       	position: absolute;
+       	z-index:99999;
+
+       	top:0;
+       	left:0;
+
+       	font-weight: normal;
+       	color:#ddd;
+       	font-size: 12px;
+       	font-style: normal;
+       	font-weight: 300;
+       	text-transform: uppercase;
+
+        padding: 10px;
+       	background: rgba(40,40,40,0.8);
+
+        white-space: nowrap;
+
+        margin-top: -10px;
+        transform: translate(-50%, -100%);
+    }
+    .tooltip span {
+       	color: #00F2FF;
+    }
 
     div#ux {
     	position: absolute;
@@ -281,5 +352,62 @@
     	bottom:0;
     	background: fo;
     	z-index: 999999;
+    }
+    @media only screen
+    and (min-device-width: 320px)
+    and (max-device-width: 480px)
+    and (-webkit-min-device-pixel-ratio: 2)
+    and (orientation: portrait) {
+        #canvasContainer {
+            position: relative;
+            width: 100%;
+        }
+        .boxes {
+            width: 20px;
+            z-index: 9999;
+        }
+        .boxes ul li {
+            display: block;
+            position: absolute;
+            width: 100%;
+            overflow: visible;
+
+            cursor: pointer;
+        }
+        .boxes ul li b {
+            display: inline-block;
+            transform: translateY(5px);
+            height: calc(100% - 10px);
+            width: 20px;
+            position: absolute;
+        }
+        .boxes ul.src li b {
+            right: 0;
+        }
+        .boxes ul li span {
+            display: inline-block;
+            position: absolute;
+            top: 50%;
+            font-size: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            width:170px;
+            text-align: left;
+            font-family: sans-serif;
+        }
+        .boxes ul li:hover span {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .boxes ul.src li span {
+            left: 0px;
+            padding-left: 30px;
+            text-align: left;
+        }
+        .boxes ul.dst li span {
+            right: 0;
+            padding-right: 30px;
+            text-align: right;
+        }
     }
 </style>

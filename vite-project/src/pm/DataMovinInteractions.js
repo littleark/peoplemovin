@@ -154,7 +154,7 @@ export default function DataMovinInteractions() {
       point = datamovin.findBezier(mouse.x, mouse.y);
 
       if (eventsCallbacks.mouseoverbezier) {
-        eventsCallbacks.mouseoverbezier.call(e, point);
+        eventsCallbacks.mouseoverbezier.call(e, point, areas);
       }
     } else if (mouse.x >= areas.dst.x1 && mouse.x <= areas.dst.x2) {
       canvas.style.cursor = "pointer";

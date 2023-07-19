@@ -1,6 +1,6 @@
+import { getMigration } from '../lib/data';
 import DataMovin from './DataMovin';
 import DataMovinInteractions from './DataMovinInteractions';
-import { getMigration } from '../lib/data';
 
 export function Flows() {
 
@@ -8,19 +8,14 @@ export function Flows() {
 
   var margins = { left: 170, top: 10, right: 170, bottom: 0, padding: { left: 0, right: 0 } };
 
-  var canvas = {},
-    ctx = {};
 
   var ix_ctx;
 
-  var processing = false;
 
   let datamovin;
-  var vertical = true;
   // var colors = new Colors();
 
-  var last = null,
-    previous = null;
+  var last = null;
 
 
   var ititle = {
@@ -53,8 +48,6 @@ export function Flows() {
     if (datamovin && support_canvas()) {
       console.log('FLOWS UPDATE')
 
-      var canvas = datamovin.getCanvas(),
-        ratio = datamovin.getRatio();
 
       // var ix = $("<canvas/>")
       //   .attr({
@@ -110,9 +103,6 @@ export function Flows() {
 
         datamovin.drawSources();
         datamovin.drawDestinations();
-        // datamovin.addLegend();
-
-        vertical = datamovin.getOrientation() == 'vertical';
 
 
         var dm_interactions = new DataMovinInteractions();
@@ -295,9 +285,6 @@ export function Flows() {
       }
       hideTooltip();
     }
-    function handleMouseMove(e) {
-      var relTarget = e.relatedTarget || e.toElement;
-    }
     function showCountryInfo(country_info, other, animate) {
       // Finger.remove();
       $(".info").hide();
@@ -315,60 +302,12 @@ export function Flows() {
             window.location.hash = "t_" + country_info.name;
           }
         } else {
-          var goToCountry = datamovin.getPointInfo(other, 'dst');
           // getCountryInfo(goToCountry.name,goToCountry.type,goToCountry.x,goToCountry.y+goToCountry.h/2+10,country_info.name);
           window.location.hash = "c_" + country_info.name + "_" + other;
         }
       } else {
         window.location.hash = "!";
       }
-    }
-    function getCountryInfo(country, direction, x, y, other, animate) {
-      $.ajax({
-        url: $info_host,
-        data: {
-          c: country,
-          src: (direction == 'src' ? 1 : 0),
-          o: (other ? other : '')
-        },
-        type: 'POST',
-        dataType: 'html',
-        success: function(html) {
-          var position = {}
-
-          if (vertical) {
-            if (direction == 'src') {
-              left = $("#flows").position().left + margins.left - $("#" + direction + "_info").outerWidth();
-            } else {
-              left = $("#flows").position().left + x + 20;//+margins.right;//x-$("#"+direction+"_info").outerWidth();
-            }
-            position = {
-              top: (y + 80) + "px",
-              left: left
-            };
-          } else {
-            position = {
-              left: (x - 205) + "px",
-              top: (y + 80 + ((direction == 'src') ? 15 : -340)) + "px"
-            };
-          }
-          //$(".info").hide();
-          $("#" + direction + "_info").show().html(html).css(position);
-
-
-          if (animate) {
-            var scrolling = {
-              scrollTop: y + "px"
-            };
-            if (!datamovin.getOrientation() == 'horizontal') {
-              scrolling = {
-                scrollLeft: x + "px"
-              };
-            }
-            $('html,body').animate(scrolling, 1000);
-          }
-        }
-      });
     }
     function initDOM() {
       tooltip = {
