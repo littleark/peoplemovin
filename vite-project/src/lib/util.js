@@ -128,7 +128,7 @@ Timer.prototype.tick = function() {
 };
 
 function splitBezier(ctx, x, y, zx, zy) {
-  console.log('splitBezier', x, y, zx, zy)
+  // console.log('splitBezier', x, y, zx, zy)
   var round = Math.round;
 
   var A = {

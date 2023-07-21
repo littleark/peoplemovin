@@ -35,6 +35,7 @@ export default function DataMovin() {
     ctx;
   let offscreenCanvas,
     offscreenCtx;
+  let overCtx;
 
   var src = {},
     dst = {},
@@ -141,6 +142,10 @@ export default function DataMovin() {
       offscreenCanvas.width = canvas.width;
       offscreenCanvas.height = canvas.height;
 
+      options.canvasOver.width = canvas.width;
+      options.canvasOver.height = canvas.height;
+      overCtx = options.canvasOver.getContext('2d');
+
       if (devicePixelRatio !== backingStoreRatio) {
         canvas.width = WIDTH * ratio;
         canvas.height = HEIGHT * ratio;
@@ -160,6 +165,14 @@ export default function DataMovin() {
         // offscreenCanvas.style.setProperty("height", (HEIGHT) + "px");
 
         // offscreenCtx.scale(ratio, ratio);
+
+        options.canvasOver.width = canvas.width;
+        options.canvasOver.height = canvas.height;
+
+        options.canvasOver.style.setProperty("width", (WIDTH) + "px");
+        options.canvasOver.style.setProperty("height", (HEIGHT) + "px");
+
+        overCtx.scale(ratio, ratio);
 
       }
       // offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.width);
@@ -414,6 +427,7 @@ export default function DataMovin() {
     }
 
   }
+
   this.drawFlowFromTo = function(from, to, clean) {
     // console.log('FROM', from, 'TO', to)
     var __from = src[from].flows[to],
@@ -422,6 +436,7 @@ export default function DataMovin() {
     if (clean) {
       this.clean();
       this.clean(offscreenCtx);
+      // this.clean(overCtx, { transparent: true })
     }
     current.src.push(from);
     current.dst.push(to);
@@ -447,6 +462,7 @@ export default function DataMovin() {
     if (clean) {
       this.clean(ctx);
       this.clean(offscreenCtx);
+      this.clean(overCtx, { transparent: true });
     }
     // this.clean(ctx);
     // ctx.globalCompositeOperation = "screen";
@@ -473,6 +489,7 @@ export default function DataMovin() {
     if (clean) {
       this.clean();
       this.clean(offscreenCtx);
+      this.clean(overCtx, { transparent: true });
     }
 
     var flows = [];
@@ -491,10 +508,11 @@ export default function DataMovin() {
     // ctx.globalCompositeOperation = "source-over";
     if (clean) {
       this.clean(offscreenCtx);
+      this.clean(overCtx, { transparent: true });
       this.clean();
     }
     // this.clean(ctx);
-    // ctx.globalCompositeOperation = "lighter";
+    ctx.globalCompositeOperation = "screen";
     flows.forEach(c => this.drawFlowFromTo(c, point));
     // ctx.drawImage(offscreenCanvas, 0, 0);
     callback();
@@ -569,6 +587,7 @@ export default function DataMovin() {
     bx,by => dest control point
   */
   function drawCurve(x, y, zx, zy, info) {
+    // console.log('drawCurve', x, y, zx, zy, info)
     var _ctx = (info.ctx) ? info.ctx : ctx;
 
     //console.log(_ctx)
@@ -578,11 +597,11 @@ export default function DataMovin() {
     zx = Math.round(zx);
     zy = Math.round(zy);
     // _ctx.save();
-    console.log('drawCurve', info.flow.f, '->', info.flow.t, info.color)
+    // console.log('drawCurve', info.flow.f, '->', info.flow.t, info.color)
     if (info.color) {
       var g = _ctx.createLinearGradient(x, y, zx, zy);
-      g.addColorStop(0, "hsla(" + info.color + ",0.5)");
-      g.addColorStop(1, "hsla(" + info.color2 + ",0.5)");
+      g.addColorStop(0, "hsla(" + info.color2 + ", " + (info.opacity ?? 0.7) + ")");
+      g.addColorStop(1, "hsla(" + info.color + ", " + (info.opacity ?? 0.7) + ")");
       _ctx.strokeStyle = g;
     } else {
       _ctx.strokeStyle = "hsla(" + info.color + ",0.5)";
@@ -637,6 +656,10 @@ export default function DataMovin() {
   this.drawCurve = function(x, y, zx, zy, info) {
     drawCurve(x, y, zx, zy, info)
   }
+  this.drawCurveOver = function(x, y, zx, zy, info) {
+    this.clean(overCtx, { transparent: true });
+    drawCurve(x, y, zx, zy, { ...info, ctx: overCtx, opacity: 1 });
+  }
   this.findBezier = function(x, y) {
     var point = null,
       bezier = null,
@@ -673,6 +696,9 @@ export default function DataMovin() {
   this.getBeziers = function() {
     return current.beziers;
   }
+  this.cleanOver = function() {
+    this.clean(overCtx, { transparent: true });
+  }
   this.clean = function(context, options) {
 
     var _ctx = context ? context : ctx;
@@ -698,12 +724,15 @@ export default function DataMovin() {
             _ctx.clearRect(x, y - 1, w, HEIGHT - margins.top - margins.bottom + 1);
           }
           return;
+        } else {
+          // console.log("fillRect")
+          _ctx.save();
+          _ctx.globalCompositeOperation = "source-over";
+          _ctx.fill = "#000000";
+          _ctx.fillRect(x, y - 1, w, HEIGHT - margins.top - margins.bottom + 1);
+          _ctx.restore();
         }
-        //console.log("fillRect")
-        _ctx.save();
-        _ctx.fill = "#000000";
-        _ctx.fillRect(x, y - 1, w, HEIGHT - margins.top - margins.bottom + 1);
-        _ctx.restore();
+
         break;
       case 'horizontal':
         x = 0;//margins.left;

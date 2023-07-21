@@ -6,6 +6,7 @@
 
     let flowData;
     let canvas;
+    let canvasOver;
     let ux;
     let dot;
     let tooltip = {
@@ -17,6 +18,7 @@
     let tooltipFrom;
     let tooltipTo;
     let tooltipFlow;
+    let tooltipCurrent;
     let flowsWithSizes;
     let datamovin;
     export let showContinents;
@@ -37,14 +39,16 @@
 
     }
     function showFlowInfo(info, areas) {
-        console.log(areas)
+        // console.log(info, areas)
         const tooltip = {
             dot,
             current: ""
         }
 
 
+
       if (info.p) {
+
         tooltipNode.style.left = Math.round(info.p.x) + "px";
         tooltipNode.style.top = Math.round(info.p.y) + "px";
 
@@ -56,19 +60,26 @@
             tooltipNode.style.transform = 'translate(-50%, -100%)';
         }
 
-        dot.style.left = Math.round(info.p.x) + "px";
-        dot.style.top = Math.round(info.p.y) + "px";
+        dot.style.left = info.p.x + "px";
+        dot.style.top = info.p.y + "px";
+        // dot.style.height = Math.max(info.i['stroke-width'], 6) + "px";
         dot.style.display = 'block';
 
 
-        if ((info.i.flow.f + "_" + info.i.flow.t) === tooltip.current) {
+        if ((info.i.flow.f + "_" + info.i.flow.t) === tooltipCurrent) {
           return;
         }
 
-        tooltip.current = info.i.flow.f + "_" + info.i.flow.t;
+        // console.log('info', info)
+        datamovin.drawCurveOver(info.b[0].x, info.b[0].y, info.b[3].x, info.b[3].y, {
+            ...info.i,
+        });
+
+        tooltipCurrent = info.i.flow.f + "_" + info.i.flow.t;
         tooltipFrom = info.i.flow.f;
         tooltipTo = info.i.flow.t;
         tooltipFlow = info.i.flow.q.toLocaleString();
+        tooltipNode.style.display = 'block';
         return;
 
         /*
@@ -90,7 +101,7 @@
               }
             }
           );
-          datamovin.drawCurve(info.b[0].x, info.b[0].y, info.b[3].x, info.b[3].y, info.i);
+          datamovin.drawCurveOver(info.b[0].x, info.b[0].y, info.b[3].x, info.b[3].y, info.i);
         })
         */
 
@@ -116,6 +127,7 @@
             labels: [],
             flowsWithSizes,
             box_w: 0,
+            canvasOver,
         })) {
 
             const ratio = datamovin.getRatio();
@@ -140,7 +152,7 @@
                 'click': showCountryInfo,
                 // 'mouseover': showCountryName,
                 'mouseoverbezier': showFlowInfo,
-                // 'mouseout': hideCountryName,
+                'mouseout': handleMouseOut,
                 // 'document_scrollwheel':hideCountryName,
                 // 'processing': handleProcessing
             });
@@ -185,6 +197,14 @@
 
     }
 
+    // handleMouseOut
+    function handleMouseOut(e) {
+        datamovin.cleanOver()
+        tooltipCurrent = null;
+        tooltipNode.style.display = 'none';
+        dot.style.display = 'none';
+    }
+
 </script>
 <main>
     <div class="flows-header">
@@ -204,8 +224,9 @@
             </ul>
         </div>
         <div id="canvasContainer">
+            <canvas bind:this={canvasOver} width="100%" class="datamovin canvas-over"></canvas>
             <canvas bind:this={canvas} width="100%" class="datamovin"></canvas>
-            <span bind:this={dot} id="dot"></span>
+            <span bind:this={dot} class="dot"></span>
             <div bind:this={tooltipNode} class="tooltip">
                 {#if tooltipFrom !== tooltipTo}
                     <span class="tooltip-flow">{tooltipFlow}</span>
@@ -244,6 +265,13 @@
     #canvasContainer {
         position: relative;
         width: calc(100% - 340px);
+    }
+    .canvas-over {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
     }
     .boxes {
         width: 170px;
@@ -304,21 +332,19 @@
         padding-left: 30px;
         text-align: left;
     }
-    span#dot {
+    span.dot {
     	display: none;
     	background: #00F2FF;
     	width:6px;
     	height:6px;
     	position: absolute;
-    	-webkit-border-radius: 3px;
     	border-radius: 3px;
     	z-index: 99999;
-    	margin-top: -3px;
-    	margin-left: -3px;
+        transform: translate(-50%, -50%);
     }
     .tooltip {
        	font-family: 'Open Sans', arial, serif;
-
+        display: none;
        	position: absolute;
        	z-index:99999;
 
