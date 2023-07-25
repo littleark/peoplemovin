@@ -5,6 +5,7 @@ import FlowsWrapper from './pm/FlowsWrapper.svelte';
 import LineChart from './pm/LineChart.svelte';
 
 let windowWidth;
+let innerWidth = window.innerWidth;
 
 const debounce = (func, delay) => {
 	let timer;
@@ -18,16 +19,17 @@ const debounce = (func, delay) => {
 };
 
 const setWindowWidth = () => {
+    console.log('setWindowWidth', window.innerWidth)
 	windowWidth = `${window.innerWidth}px`;
 };
 
-const debouncedSetWindowWidth = debounce(setWindowWidth, 300);
+const debouncedSetWindowWidth = debounce(setWindowWidth, 100);
 
 onMount(() => {
-	// window.addEventListener('resize', debouncedSetWindowWidth);
-	// return () => {
-//		window.removeEventListener('resize', debouncedSetWindowWidth);
-	//}
+    window.addEventListener('resize', debouncedSetWindowWidth);
+    return () => {
+        window.removeEventListener('resize', debouncedSetWindowWidth);
+    }
 });
 
 afterUpdate(() => {
@@ -35,6 +37,8 @@ afterUpdate(() => {
    // flows.update();
 });
 </script>
+
+
 
 <main>
         <section>
@@ -74,7 +78,12 @@ afterUpdate(() => {
                 Europe and Asia each hosted around 87 and 86 million international migrants, respectively – comprising 61% of the global international migrant stock.<br/>
                 These regions were followed by North America, with almost 59 million international migrants in 2020 or 21 percent of the global migrant stock, Africa at 9 per cent, Latin America and the Caribbean at 5 per cent, and Oceania at 3 percent.
             </p>
-            <FlowsWrapper showContinents={true} preselected={[{country:'EUROPE', direction:'to'},{country:'ASIA', direction:'to'}]}/>
+            <FlowsWrapper
+                showContinents={true}
+                preselected={[{country:'EUROPE', direction:'to'},{country:'ASIA', direction:'to'}]}
+                windowWidth={windowWidth}
+                innerWidth={innerWidth}
+            />
         </section>
         <section>
             <h3>Country by country</h3>

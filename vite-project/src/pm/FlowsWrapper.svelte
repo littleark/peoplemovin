@@ -23,6 +23,8 @@
     let datamovin;
     export let showContinents;
     export let preselected = null;
+    export let innerWidth;
+    export let windowWidth;
 
     const continentColors = {
       'ASIA': '#8dd3c7',
@@ -44,9 +46,6 @@
             dot,
             current: ""
         }
-
-
-
       if (info.p) {
 
         tooltipNode.style.left = Math.round(info.p.x) + "px";
@@ -81,36 +80,18 @@
         tooltipFlow = info.i.flow.q.toLocaleString();
         tooltipNode.style.display = 'block';
         return;
-
-        /*
-        // ATTEMPT TO PAINT HOVERED CURVE
-        info.i.ctx = ix_ctx;
-        info.i["stroke-width"] = info.i["stroke-width"] > 1 ? info.i["stroke-width"] : 1;
-        info.i.color = "180,100%,50%";;
-        info.i.color2 = null;
-        requestAnimationFrame(function() {
-          datamovin.clean(
-            ix_ctx,
-            {
-              transparent: true,
-              area: {
-                x1: info.b[0].x,
-                y1: info.b[0].y,
-                x2: info.b[3].x,
-                y2: info.b[3].y
-              }
-            }
-          );
-          datamovin.drawCurveOver(info.b[0].x, info.b[0].y, info.b[3].x, info.b[3].y, info.i);
-        })
-        */
-
       } else {
         // hideTooltip();
       }
 
 
     }
+
+    afterUpdate(() => {
+        if(datamovin) {
+            datamovin.update();
+        }
+	})
 
     onMount(async () => {
         flowData = await getMigration(showContinents);

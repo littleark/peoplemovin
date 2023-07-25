@@ -31,11 +31,11 @@ export default function DataMovin() {
 
   var self = this,
     requestId = null,
-    canvas,
     ctx;
   let offscreenCanvas,
     offscreenCtx;
-  let overCtx;
+  let overCanvas,
+    overCtx;
 
   var src = {},
     dst = {},
@@ -57,19 +57,17 @@ export default function DataMovin() {
   var WIDTH,
     HEIGHT;
 
-  canvas = document.createElement("canvas");
-  ctx = canvas.getContext("2d");
-
   offscreenCanvas = document.createElement("canvas");
   offscreenCtx = offscreenCanvas.getContext("2d");
+
   // offscreenCanvas.globalCompositeOperation = 'xor';
 
   var devicePixelRatio = window.devicePixelRatio || 1,
-    backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
-      ctx.mozBackingStorePixelRatio ||
-      ctx.msBackingStorePixelRatio ||
-      ctx.oBackingStorePixelRatio ||
-      ctx.backingStorePixelRatio || 1,
+    backingStoreRatio = offscreenCtx.webkitBackingStorePixelRatio ||
+      offscreenCtx.mozBackingStorePixelRatio ||
+      offscreenCtx.msBackingStorePixelRatio ||
+      offscreenCtx.oBackingStorePixelRatio ||
+      offscreenCtx.backingStorePixelRatio || 1,
 
     ratio = devicePixelRatio / backingStoreRatio;
 
@@ -77,7 +75,7 @@ export default function DataMovin() {
     if (!!document.createElement('canvas').getContext) {
 
       label_reference = options.labels;
-
+      this.canvas = canvas;
       console.log('DataMovin.init', canvas, options)
 
       // var heights = initFlows(options.flows)
@@ -95,16 +93,13 @@ export default function DataMovin() {
 
 
       padding = {
-        left: (heights.to - heights.from > 0) ? (heights.to - heights.from) / 2 : 0,
-        right: (heights.from - heights.to > 0) ? (heights.from - heights.to) / 2 : 0
+        left: 0, // (heights.to - heights.from > 0) ? (heights.to - heights.from) / 2 : 0,
+        right: 0, // (heights.from - heights.to > 0) ? (heights.from - heights.to) / 2 : 0
       };
 
       // canvas=document.createElement("canvas");
       // canvas = document.getElementById("flows");
       const flows_container = document.getElementById('canvasContainer');
-
-
-
       canvas.width = flows_container.offsetWidth;
 
       ctx = canvas.getContext("2d");
@@ -142,9 +137,10 @@ export default function DataMovin() {
       offscreenCanvas.width = canvas.width;
       offscreenCanvas.height = canvas.height;
 
-      options.canvasOver.width = canvas.width;
-      options.canvasOver.height = canvas.height;
-      overCtx = options.canvasOver.getContext('2d');
+      overCanvas = options.canvasOver;
+      overCanvas.width = canvas.width;
+      overCanvas.height = canvas.height;
+      overCtx = overCanvas.getContext('2d');
 
       if (devicePixelRatio !== backingStoreRatio) {
         canvas.width = WIDTH * ratio;
@@ -156,7 +152,7 @@ export default function DataMovin() {
         canvas.style.setProperty("width", (WIDTH) + "px");
         canvas.style.setProperty("height", (HEIGHT) + "px");
 
-        ctx.scale(ratio, ratio);
+        this.ctx.scale(ratio, ratio);
 
         offscreenCanvas.width = canvas.width;
         offscreenCanvas.height = canvas.height;
@@ -166,11 +162,11 @@ export default function DataMovin() {
 
         // offscreenCtx.scale(ratio, ratio);
 
-        options.canvasOver.width = canvas.width;
-        options.canvasOver.height = canvas.height;
+        overCanvas.width = canvas.width;
+        overCanvas.height = canvas.height;
 
-        options.canvasOver.style.setProperty("width", (WIDTH) + "px");
-        options.canvasOver.style.setProperty("height", (HEIGHT) + "px");
+        overCanvas.style.setProperty("width", (WIDTH) + "px");
+        overCanvas.style.setProperty("height", (HEIGHT) + "px");
 
         overCtx.scale(ratio, ratio);
 
@@ -183,28 +179,48 @@ export default function DataMovin() {
       return null;
     }
   }
-  this.update = function() {
+  this.update = function(width) {
     // return;
     // console.log('DATAMOVIN UPDATE')
-    canvas = document.getElementById("flows");
-    const flows_container = document.getElementById('flows_container');
-    canvas.width = flows_container.offsetWidth;
+    const flows_container = document.getElementById('canvasContainer');
+    // console.log(flows_container.offsetWidth, '!==', this.canvas.width / ratio, ratio)
+    if (flows_container.offsetWidth !== this.canvas.width / ratio) {
 
-    // console.log('SETTING WIDTH TO', flows_container.offsetWidth)
-    WIDTH = canvas.width;
+      this.canvas.width = flows_container.offsetWidth;
 
-    if (devicePixelRatio !== backingStoreRatio) {
-      canvas.width = WIDTH * ratio;
-      canvas.height = HEIGHT * ratio;
+      console.log('SETTING WIDTH TO', flows_container.offsetWidth)
+      console.log('current', current)
+      WIDTH = this.canvas.width;
+      offscreenCanvas.width = this.canvas.width;
 
-      ctx.fill = "#000000";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (devicePixelRatio !== backingStoreRatio) {
+        this.canvas.width = WIDTH * ratio;
+        this.canvas.height = HEIGHT * ratio;
 
-      canvas.style.setProperty("width", (WIDTH) + "px");
-      canvas.style.setProperty("height", (HEIGHT) + "px");
-      // console.log('SET WIDTH TO', WIDTH)
-      ctx.scale(ratio, ratio);
+        this.ctx.fill = "#000000";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+        this.canvas.style.setProperty("width", (WIDTH) + "px");
+        this.canvas.style.setProperty("height", (HEIGHT) + "px");
+        // console.log('SET WIDTH TO', WIDTH)
+        this.ctx.scale(ratio, ratio);
+
+        overCanvas.width = this.canvas.width;
+        overCanvas.height = this.canvas.height;
+
+        overCanvas.style.setProperty("width", (WIDTH) + "px");
+        overCanvas.style.setProperty("height", (HEIGHT) + "px");
+
+        overCtx.scale(ratio, ratio);
+
+        const dst = [...new Set(current.dst)];
+        current.dst = [];
+        current.src = [];
+        current.beziers = [];
+        dst.forEach(d => {
+          this.drawInFlow(d, false);
+        })
+      }
     }
   }
   this.showCountries = function(countries) {
@@ -452,7 +468,7 @@ export default function DataMovin() {
     if (orientation == 'horizontal') {
       drawCurve(__from.x + __from.flow / 2, __from.y + __from.w, __to.x + __from.flow / 2, __to.y, info);
     } else {
-      drawCurve(__from.x + __from.w, __from.y + __from.flow / 2, __to.x, __to.y + __from.flow / 2, info);
+      drawCurve(0 + __from.w, __from.y + __from.flow / 2, WIDTH - __to.w, __to.y + __from.flow / 2, info);
     }
 
   }
