@@ -11,6 +11,42 @@ export const continentColors = {
 
 let continentMap = [];
 
+export function getTopNFlows(flowData, n = 10) {
+  // console.log('FLOWDATA FOR N FLOWS', flowData)
+  const flows = Object.values(flowData).reduce((acc, d) => {
+    // console.log('d', d);
+    Object.values(d.flows).forEach(flow => {
+      acc.out[d.src] = acc.out[d.src] ?? [];
+      // console.log('FLOW', flow)
+      acc.out[d.src].push({
+        src: d.src,
+        dst: flow.dst,
+        qty: flow.f,
+      })
+      acc.out[d.src].sort((a, b) => b.qty - a.qty)
+      if (acc.out[d.src].length > n) {
+        acc.out[d.src] = acc.out[d.src].slice(0, n);
+      }
+      acc.in[flow.dst] = acc.in[flow.dst] ?? [];
+      acc.in[flow.dst].push({
+        dst: flow.dst,
+        src: d.src,
+        qty: flow.f,
+      })
+      acc.in[flow.dst].sort((a, b) => b.qty - a.qty)
+      if (acc.in[flow.dst].length > n) {
+        acc.in[flow.dst] = acc.in[flow.dst].slice(0, n);
+      }
+    })
+    return acc;
+  }, {
+    out: {},
+    in: {},
+  })
+  return flows;
+
+}
+
 export async function getMigration(showContinents = false) {
   // console.log('GET MIGRATION', showContinents)
   // const locationCodes = await d3.csv('/data/location-codes.csv');

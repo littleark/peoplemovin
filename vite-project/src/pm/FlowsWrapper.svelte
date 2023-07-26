@@ -1,6 +1,6 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
-    import { getMigration, initFlows } from '../lib/data';
+    import { getMigration, initFlows, getTopNFlows } from '../lib/data';
     import DataMovin from './DataMovin';
     import DataMovinInteractions from './DataMovinInteractions';
 
@@ -96,7 +96,8 @@
     onMount(async () => {
         flowData = await getMigration(showContinents);
         // console.log('FlowsWrapper', flowData);
-
+        const topN = getTopNFlows(flowData, 10);
+        console.log('topN', topN);
         datamovin = new DataMovin();
         flowsWithSizes = initFlows(flowData);
         // console.log('flowsWithSizes', flowsWithSizes);
